@@ -1,5 +1,5 @@
-Software Egineer interview solutions
+Data structures and algorithms (DSA)
 ====================================
 
-As the interview questions tend to repeat a lot it is very handy to keep the
-working solutions always ready.
+Implementation and documentation of data structures and algorithms with tested
+code.
