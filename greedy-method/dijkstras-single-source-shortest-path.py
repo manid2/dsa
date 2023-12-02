@@ -3,62 +3,101 @@
 from queue import PriorityQueue
 
 
-# This graph is represented using adjacency matrix
+MAX_WEIGHT = float('inf')
+
+
 class Graph:
-    def __init__(self, num_of_nodes):
-        self.vertices = num_of_nodes
-        self.edges = [[-1 for i in range(self.vertices)]
-                      for j in range(self.vertices)]
-        self.visited = []
+    """This graph is represented using adjacency matrix"""
 
-    def add_edge(self, node1, node2, weight):
-        self.edges[node1][node2] = self.edges[node2][node1] = weight
+    def __init__(self, vertices=0, edges=[]):
+        self.vertices = vertices if vertices else len(edges)
 
-    def dijkstra_path(self, start_vertex):
-        D = {v:float('inf') for v in range(self.vertices)}
-        D[start_vertex] = 0
+        if self.is_valid_edges(edges):
+            self.edges = edges
+        else:
+            self.edges = self.get_init_edges()
+
+    def get_init_edges(self):
+        return [[-1 for column in range(self.vertices)]
+                 for row in range(self.vertices)]
+
+    def is_valid_node(self, a):
+        return (a > -1 and a < self.vertices)
+
+    def is_valid_edges(self, edges):
+        return (self.vertices == len(edges) and
+                self.vertices == len(edges[0]))
+
+    def add_edge(self, a, b, weight):
+        """Add an edge to undirected weighted graph"""
+
+        if self.is_valid_node(a) and self.is_valid_node(b):
+            self.edges[a][b] = self.edges[b][a] = weight
+        else:
+            raise ValueError(f"Invalid nodes {a}, {b}, " +
+                              "a valid node is in range " +
+                              "[0, {}]".format(self.vertices - 1))
+
+    def add_edges(self, edges):
+        """Add all edges in the form of adjacency matrix to the graph"""
+
+        if self.is_valid_edges(edges):
+            self.edges = edges
+        else:
+            raise ValueError("Invalid adjacency matrix, " +
+                             "a valid matrix must be {} x {}"
+                             .format(self.vertices))
+
+    def print(self, start, d):
+        for v in range(len(d)):
+            print("{0}-{1}: {2}".format(start, v, d[v]))
+
+    def no_edge(self, u, v):
+        return self.edges[u][v] == -1
+
+    def dijkstras_path(self, start):
+        """
+        Dijkstra's algorithm to find single source shortest path to all nodes.
+
+        Refer:
+
+        * https://stackabuse.com/courses/graphs-in-python-theory-and-implementation/lessons/dijkstras-algorithm/
+        """
+
+        d = {v: MAX_WEIGHT for v in range(self.vertices)}
+        d[start] = 0
 
         pq = PriorityQueue()
-        pq.put((0, start_vertex))
+        pq.put((d[start], start))
+
+        visited = set()
 
         while not pq.empty():
-            (dist, current_vertex) = pq.get()
-            self.visited.append(current_vertex)
+            du, u = pq.get()
+            visited.add(u)
 
-            for neighbor in range(self.vertices):
-                if self.edges[current_vertex][neighbor] != -1:
-                    distance = self.edges[current_vertex][neighbor]
-                    if neighbor not in self.visited:
-                        old_cost = D[neighbor]
-                        new_cost = D[current_vertex] + distance
-                        if new_cost < old_cost:
-                            pq.put((new_cost, neighbor))
-                            D[neighbor] = new_cost
-        return D
+            for v in range(self.vertices):
+                if self.no_edge(u, v) or v in visited:
+                    continue
 
-    def print_path(self, D):
-        for vertex in range(len(D)):
-            print("Distance from vertex 0 to vertex", vertex, "is", D[vertex])
+                dist = du + self.edges[u][v]
+                if dist < d[v]:
+                    pq.put((dist, v))
+                    d[v] = dist
+        return d
 
-# TODO: Trace code and fix issues
+# TODO: Add pytest and tox for automated tests
 def solve():
-    g = Graph(9)
+    g = Graph(5)
     g.add_edge(0, 1, 4)
-    g.add_edge(0, 2, 7)
-    g.add_edge(1, 2, 11)
-    g.add_edge(1, 3, 9)
-    g.add_edge(1, 5, 20)
-    g.add_edge(2, 5, 1)
-    g.add_edge(3, 6, 6)
-    g.add_edge(3, 4, 2)
-    g.add_edge(4, 6, 10)
-    g.add_edge(4, 8, 15)
-    g.add_edge(4, 7, 5)
-    g.add_edge(4, 5, 1)
-    g.add_edge(5, 7, 3)
-    g.add_edge(6, 8, 5)
-    g.add_edge(7, 8, 12)
-    result = g.dijkstra_path(0)
-    g.print_path(result)
+    g.add_edge(0, 3, 3)
+    g.add_edge(0, 4, 5)
+    g.add_edge(1, 2, 2)
+    g.add_edge(2, 3, 1)
+    start = 0
+    res = g.dijkstras_path(start)
+
+    print("=== Dijkstra's SSSP ===")
+    g.print(start, res)
 
 solve()
