@@ -1,2 +1,4 @@
-*.o
-*.out
+__pycache__
+
+# ignore virtual environment directory
+.dsavenv
