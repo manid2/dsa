@@ -19,7 +19,7 @@ class Graph:
 
     def get_init_edges(self):
         return [[-1 for column in range(self.vertices)]
-                 for row in range(self.vertices)]
+                for row in range(self.vertices)]
 
     def is_valid_node(self, a):
         return (a > -1 and a < self.vertices)
@@ -35,8 +35,8 @@ class Graph:
             self.edges[a][b] = self.edges[b][a] = weight
         else:
             raise ValueError(f"Invalid nodes {a}, {b}, " +
-                              "a valid node is in range " +
-                              "[0, {}]".format(self.vertices - 1))
+                             "a valid node is in range " +
+                             "[0, {}]".format(self.vertices - 1))
 
     def add_edges(self, edges):
         """Add all edges in the form of adjacency matrix to the graph"""
@@ -45,7 +45,7 @@ class Graph:
             self.edges = edges
         else:
             raise ValueError("Invalid adjacency matrix, " +
-                             "a valid matrix must be {} x {}"
+                             "a valid matrix must be {0} x {0}"
                              .format(self.vertices))
 
     def print(self, start, d):
@@ -61,7 +61,10 @@ class Graph:
 
         Refer:
 
-        * https://stackabuse.com/courses/graphs-in-python-theory-and-implementation/lessons/dijkstras-algorithm/
+        * `Dijkstra's algorithm | stackabuse <sa1>`_
+
+        # noqa: E501
+        .. _sa1: https://stackabuse.com/courses/graphs-in-python-theory-and-implementation/lessons/dijkstras-algorithm/
         """
 
         d = {v: MAX_WEIGHT for v in range(self.vertices)}
@@ -87,6 +90,8 @@ class Graph:
         return d
 
 # TODO: Add pytest and tox for automated tests
+
+
 def solve():
     g = Graph(5)
     g.add_edge(0, 1, 4)
@@ -99,5 +104,6 @@ def solve():
 
     print("=== Dijkstra's SSSP ===")
     g.print(start, res)
+
 
 solve()

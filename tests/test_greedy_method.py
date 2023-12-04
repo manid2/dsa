@@ -1,6 +1,5 @@
-import pytest
-
 from greedy_method import dijkstras
+
 
 def test_greedy_method_dijsktras():
     exp_res = {0: 0, 1: 4, 2: 4, 3: 3, 4: 5}

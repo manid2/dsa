@@ -18,8 +18,8 @@ class Graph:
             self.edges.append([a, b, weight])
         else:
             raise ValueError(f"Invalid nodes {a}, {b}, " +
-                              "a valid node is in range " +
-                              "[0, {}]".format(self.vertices - 1))
+                             "a valid node is in range " +
+                             "[0, {}]".format(self.vertices - 1))
 
     def add_edges(self, edges):
         """Add all edges in the form of adjacency list to the graph"""
@@ -53,7 +53,10 @@ class Graph:
 
         Refer:
 
-        * https://stackabuse.com/courses/graphs-in-python-theory-and-implementation/lessons/minimum-spanning-trees-kruskals-algorithm/
+        * `Kruskal's algorithm | stackabuse <sa1>`_
+
+        # noqa: E501
+        .. _sa1: https://stackabuse.com/courses/graphs-in-python-theory-and-implementation/lessons/minimum-spanning-trees-kruskals-algorithm/
         """
 
         # Sort edges by their weight
@@ -80,6 +83,8 @@ class Graph:
         return result, min_cost
 
 # TODO: Add pytest and tox for automated tests
+
+
 def solve():
     edges = [[0, 1, 4],
              [0, 3, 3],
@@ -94,5 +99,6 @@ def solve():
     res = Graph(vertices=5, edges=r)
     res.print()
     print("min cost: {}".format(m))
+
 
 solve()

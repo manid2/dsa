@@ -17,7 +17,7 @@ class Graph:
 
     def get_init_edges(self):
         return [[0 for column in range(self.vertices)]
-                 for row in range(self.vertices)]
+                for row in range(self.vertices)]
 
     def is_valid_node(self, a):
         return (a > 0 and a < self.vertices)
@@ -33,8 +33,8 @@ class Graph:
             self.edges[a][b] = self.edges[b][a] = weight
         else:
             raise ValueError(f"Invalid nodes {a}, {b}, " +
-                              "a valid node is in range " +
-                              "[0, {}]".format(self.vertices - 1))
+                             "a valid node is in range " +
+                             "[0, {}]".format(self.vertices - 1))
 
     def add_edges(self, edges):
         """Add all edges in the form of adjacency matrix to the graph"""
@@ -43,7 +43,7 @@ class Graph:
             self.edges = edges
         else:
             raise ValueError("Invalid adjacency matrix, " +
-                             "a valid matrix must be {} x {}"
+                             "a valid matrix must be {0} x {0}"
                              .format(self.vertices))
 
     def print(self):
@@ -58,7 +58,9 @@ class Graph:
 
         Refer:
 
-        * https://favtutor.com/blogs/prims-algorithm-python
+        * `Prim's algorithm | favtutor <fv1>`_
+
+        .. _fv1: https://favtutor.com/blogs/prims-algorithm-python
         """
 
         # Keep a list of selected nodes to ensure they are not picked twice
@@ -68,7 +70,7 @@ class Graph:
         result = self.get_init_edges()
         min_cost = 0
 
-        while(False in selected_nodes):
+        while (False in selected_nodes):
 
             # Use infinite weight to select the initial minimum weight
             min_weight = MAX_WEIGHT
@@ -94,6 +96,8 @@ class Graph:
         return result, min_cost
 
 # TODO: Add pytest and tox for automated tests
+
+
 def solve():
     edges = [[0, 4, 0, 3, 5],
              [4, 0, 2, 0, 0],
@@ -108,5 +112,6 @@ def solve():
     res = Graph(edges=r)
     res.print()
     print("min cost: {}".format(m))
+
 
 solve()

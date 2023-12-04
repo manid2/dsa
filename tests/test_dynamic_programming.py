@@ -1,6 +1,5 @@
-import pytest
-
 import dynamic_programming as dp
+
 
 def test_dynamic_programming_fibonacci():
     exp_res = {5: 3, 10: 34}
