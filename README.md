@@ -12,10 +12,21 @@ Tests
 python3 -m venv .dsavenv
 source .dsavenv/bin/activate
 
+# install dependencies
+(.dsavenv) pip install -Ur requirements.txt
+
 # run pytests
-(.dsavenv) pip install pytest
 (.dsavenv) pytest
 
-# generate requirements.txt
+# run pylint
+(.dsavenv) pylint ${modules} ${tests}
+
+# run flake8
+(.dsavenv) flake8 ${modules} ${tests}
+
+# run autopep8
+(.dsavenv) autopep8 -i -a ${modules} ${tests}
+
+# update requirements.txt
 (.dsavenv) pip freeze > requirements.txt
 ```
