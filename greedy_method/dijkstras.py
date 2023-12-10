@@ -1,109 +1,39 @@
-#!/usr/bin/env python3
-
 from queue import PriorityQueue
 
 
 MAX_WEIGHT = float('inf')
 
 
-class Graph:
-    """This graph is represented using adjacency matrix"""
+def dijkstras_path(start, graph):
+    """
+    Dijkstra's algorithm to find single source shortest path to all nodes.
 
-    def __init__(self, vertices=0, edges=None):
-        self.vertices = vertices if vertices else len(edges)
+    Refer:
 
-        if edges and self.is_valid_edges(edges):
-            self.edges = edges
-        else:
-            self.edges = self.get_init_edges()
+    * `Dijkstra's algorithm | stackabuse <sa1>`_
 
-    def get_init_edges(self):
-        return [[-1 for column in range(self.vertices)]
-                for row in range(self.vertices)]
+    # noqa: E501
+    .. _sa1: https://stackabuse.com/courses/graphs-in-python-theory-and-implementation/lessons/dijkstras-algorithm/
+    """
 
-    def is_valid_node(self, a):
-        return -1 < a < self.vertices
+    d = {v: MAX_WEIGHT for v in range(graph.vertices)}
+    d[start] = 0
 
-    def is_valid_edges(self, edges):
-        return (self.vertices == len(edges) and
-                self.vertices == len(edges[0]))
+    pq = PriorityQueue()
+    pq.put((d[start], start))
 
-    def add_edge(self, a, b, weight):
-        """Add an edge to undirected weighted graph"""
+    visited = set()
 
-        if self.is_valid_node(a) and self.is_valid_node(b):
-            self.edges[a][b] = self.edges[b][a] = weight
-        else:
-            raise ValueError(f"Invalid nodes {a}, {b}, " +
-                             "a valid node is in range " +
-                             f"[0, {self.vertices - 1}]")
+    while not pq.empty():
+        du, u = pq.get()
+        visited.add(u)
 
-    def add_edges(self, edges):
-        """Add all edges in the form of adjacency matrix to the graph"""
+        for v in range(graph.vertices):
+            if graph.no_edge(u, v) or v in visited:
+                continue
 
-        if self.is_valid_edges(edges):
-            self.edges = edges
-        else:
-            raise ValueError("Invalid adjacency matrix, " +
-                             "a valid matrix must be " +
-                             f"{self.vertices} x {self.vertices}")
-
-    def print(self, start, d):
-        for node, dist in enumerate(d):
-            print(f"{start}-{node}: {dist}")
-
-    def no_edge(self, u, v):
-        return self.edges[u][v] == -1
-
-    def dijkstras_path(self, start):
-        """
-        Dijkstra's algorithm to find single source shortest path to all nodes.
-
-        Refer:
-
-        * `Dijkstra's algorithm | stackabuse <sa1>`_
-
-        # noqa: E501
-        .. _sa1: https://stackabuse.com/courses/graphs-in-python-theory-and-implementation/lessons/dijkstras-algorithm/
-        """
-
-        d = {v: MAX_WEIGHT for v in range(self.vertices)}
-        d[start] = 0
-
-        pq = PriorityQueue()
-        pq.put((d[start], start))
-
-        visited = set()
-
-        while not pq.empty():
-            du, u = pq.get()
-            visited.add(u)
-
-            for v in range(self.vertices):
-                if self.no_edge(u, v) or v in visited:
-                    continue
-
-                dist = du + self.edges[u][v]
-                if dist < d[v]:
-                    pq.put((dist, v))
-                    d[v] = dist
-        return d
-
-# TODO: Add pytest and tox for automated tests
-
-
-def solve():
-    g = Graph(5)
-    g.add_edge(0, 1, 4)
-    g.add_edge(0, 3, 3)
-    g.add_edge(0, 4, 5)
-    g.add_edge(1, 2, 2)
-    g.add_edge(2, 3, 1)
-    start = 0
-    res = g.dijkstras_path(start)
-
-    print("=== Dijkstra's SSSP ===")
-    g.print(start, res)
-
-
-solve()
+            dist = du + graph.edges[u][v]
+            if dist < d[v]:
+                pq.put((dist, v))
+                d[v] = dist
+    return d

@@ -1,42 +1,12 @@
-#!/usr/bin/env python3
-
-
-class Graph:
-    """This graph is represented using adjacency list"""
-
-    def __init__(self, vertices=0, edges=None):
-        self.vertices = vertices
-        self.edges = edges
-
-    def is_valid_node(self, a):
-        return -1 < a < self.vertices
-
-    def add_edge(self, a, b, weight):
-        """Add an edge to undirected weighted graph"""
-
-        if self.is_valid_node(a) and self.is_valid_node(b):
-            self.edges.append([a, b, weight])
-        else:
-            raise ValueError(f"Invalid nodes {a}, {b}, " +
-                             "a valid node is in range " +
-                             f"[0, {self.vertices - 1}]")
-
-    def add_edges(self, edges):
-        """Add all edges in the form of adjacency list to the graph"""
-        self.edges = edges
-
-    def print(self):
-        for a, b, weight in self.edges:
-            print(f"{a}-{b}: {weight}")
-
-    # Finds the root node of a subtree containing node `i`
+class KruskalsMST:
     def find_subtree(self, parent, i):
+        """Finds the root node of a subtree containing node `i`"""
         if parent[i] == i:
             return i
         return self.find_subtree(parent, parent[i])
 
-    # Connects subtrees containing nodes `x` and `y`
     def connect_subtrees(self, parent, subtree_sizes, x, y):
+        """Connects subtrees containing nodes `x` and `y`"""
         xroot = self.find_subtree(parent, x)
         yroot = self.find_subtree(parent, y)
         if subtree_sizes[xroot] < subtree_sizes[yroot]:
@@ -47,7 +17,7 @@ class Graph:
             parent[yroot] = xroot
             subtree_sizes[xroot] += 1
 
-    def kruskals_mst(self):
+    def kruskals_mst(self, graph):
         """
         Kruskal's algorithm to find the Minimum Spanning Tree (MST)
 
@@ -60,16 +30,16 @@ class Graph:
         """
 
         # Sort edges by their weight
-        self.edges = sorted(self.edges, key=lambda item: item[2])
+        graph.edges = sorted(graph.edges, key=lambda item: item[2])
 
-        parent = list(range(self.vertices))
-        subtree_sizes = [0] * self.vertices
+        parent = list(range(graph.vertices))
+        subtree_sizes = [0] * graph.vertices
 
         result = []
         e = i = min_cost = 0
 
-        while e < (self.vertices - 1):
-            u, v, w = self.edges[i]
+        while e < (graph.vertices - 1):
+            u, v, w = graph.edges[i]
             i = i + 1
 
             x = self.find_subtree(parent, u)
@@ -81,24 +51,3 @@ class Graph:
                 min_cost += w
                 self.connect_subtrees(parent, subtree_sizes, x, y)
         return result, min_cost
-
-# TODO: Add pytest and tox for automated tests
-
-
-def solve():
-    edges = [[0, 1, 4],
-             [0, 3, 3],
-             [0, 4, 5],
-             [1, 2, 2],
-             [2, 3, 1]]
-
-    g = Graph(vertices=5, edges=edges)
-    r, m = g.kruskals_mst()
-
-    print("=== Kruskal's MST ===")
-    res = Graph(vertices=5, edges=r)
-    res.print()
-    print(f"min cost: {m}")
-
-
-solve()
