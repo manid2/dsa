@@ -8,13 +8,17 @@ PYLINT_CMD:=pylint --rcfile=.pylintrc.toml
 
 .PHONY: .dsavenv tests check clean lint format
 
-.dsavenv:
+.dsavenv: .dsavenv/done
+
+.dsavenv/done: requirements.txt
 	test -d .dsavenv || python3 -m venv .dsavenv
 	$(DSAVENV_ACTIVATE_CMD) pip install -Ur requirements.txt
+	touch .dsavenv/done
 
 tests: lint
+	touch .dsavenv/testsdone
 
-check: tests
+check: .dsavenv/testsdone
 	$(DSAVENV_ACTIVATE_CMD) pytest
 
 clean:
