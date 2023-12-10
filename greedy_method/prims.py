@@ -7,10 +7,10 @@ MAX_WEIGHT = float('inf')
 class Graph:
     """This graph is represented using adjacency matrix"""
 
-    def __init__(self, vertices=0, edges=[]):
+    def __init__(self, vertices=0, edges=None):
         self.vertices = vertices if vertices else len(edges)
 
-        if self.is_valid_edges(edges):
+        if edges and self.is_valid_edges(edges):
             self.edges = edges
         else:
             self.edges = self.get_init_edges()
@@ -20,7 +20,7 @@ class Graph:
                 for row in range(self.vertices)]
 
     def is_valid_node(self, a):
-        return (a > 0 and a < self.vertices)
+        return -1 < a < self.vertices
 
     def is_valid_edges(self, edges):
         return (self.vertices == len(edges) and
@@ -34,7 +34,7 @@ class Graph:
         else:
             raise ValueError(f"Invalid nodes {a}, {b}, " +
                              "a valid node is in range " +
-                             "[0, {}]".format(self.vertices - 1))
+                             f"[0, {self.vertices - 1}]")
 
     def add_edges(self, edges):
         """Add all edges in the form of adjacency matrix to the graph"""
@@ -43,14 +43,14 @@ class Graph:
             self.edges = edges
         else:
             raise ValueError("Invalid adjacency matrix, " +
-                             "a valid matrix must be {0} x {0}"
-                             .format(self.vertices))
+                             "a valid matrix must be " +
+                             f"{self.vertices} x {self.vertices}")
 
     def print(self):
         for i in range(self.vertices):
             for j in range(0 + i, self.vertices):
                 if self.edges[i][j]:
-                    print("{0}-{1}: {2}".format(i, j, self.edges[i][j]))
+                    print(f"{i}-{j}: {self.edges[i][j]}")
 
     def prims_mst(self):
         """
@@ -70,21 +70,28 @@ class Graph:
         result = self.get_init_edges()
         min_cost = 0
 
-        while (False in selected_nodes):
+        while False in selected_nodes:
 
             # Use infinite weight to select the initial minimum weight
             min_weight = MAX_WEIGHT
             a = b = 0
 
             for i in range(self.vertices):
-                if selected_nodes[i]:
-                    # If a node (i) is selected then check if it has a minimum
-                    # cost path to another unselected node (j)
-                    for j in range(self.vertices):
-                        if not selected_nodes[j] and self.edges[i][j]:
-                            if self.edges[i][j] < min_weight:
-                                min_weight = self.edges[i][j]
-                                a, b = i, j
+                if not selected_nodes[i]:
+                    continue
+
+                # If a node (i) is selected then check if it has a minimum
+                # cost path to another unselected node (j)
+                for j in range(self.vertices):
+                    if selected_nodes[j]:
+                        continue
+
+                    if not self.edges[i][j]:
+                        continue
+
+                    if self.edges[i][j] < min_weight:
+                        min_weight = self.edges[i][j]
+                        a, b = i, j
 
             if min_weight == MAX_WEIGHT:
                 min_weight = 0
@@ -111,7 +118,7 @@ def solve():
     print("=== Prim's MST ===")
     res = Graph(edges=r)
     res.print()
-    print("min cost: {}".format(m))
+    print(f"min cost: {m}")
 
 
 solve()

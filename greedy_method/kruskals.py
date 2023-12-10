@@ -4,12 +4,12 @@
 class Graph:
     """This graph is represented using adjacency list"""
 
-    def __init__(self, vertices=0, edges=[]):
+    def __init__(self, vertices=0, edges=None):
         self.vertices = vertices
         self.edges = edges
 
     def is_valid_node(self, a):
-        return (a > 0 and a < self.vertices)
+        return -1 < a < self.vertices
 
     def add_edge(self, a, b, weight):
         """Add an edge to undirected weighted graph"""
@@ -19,7 +19,7 @@ class Graph:
         else:
             raise ValueError(f"Invalid nodes {a}, {b}, " +
                              "a valid node is in range " +
-                             "[0, {}]".format(self.vertices - 1))
+                             f"[0, {self.vertices - 1}]")
 
     def add_edges(self, edges):
         """Add all edges in the form of adjacency list to the graph"""
@@ -27,7 +27,7 @@ class Graph:
 
     def print(self):
         for a, b, weight in self.edges:
-            print("{0}-{1}: {2}".format(a, b, weight))
+            print(f"{a}-{b}: {weight}")
 
     # Finds the root node of a subtree containing node `i`
     def find_subtree(self, parent, i):
@@ -98,7 +98,7 @@ def solve():
     print("=== Kruskal's MST ===")
     res = Graph(vertices=5, edges=r)
     res.print()
-    print("min cost: {}".format(m))
+    print(f"min cost: {m}")
 
 
 solve()

@@ -18,16 +18,15 @@ class DpMemFibonacci:
     def get(self, n):
         if n < 0:
             raise ValueError(f"Negative value {n} not supported!")
-        else:
-            return self.fibo(n)
+        return self.fibo(n)
 
     def fibo(self, n):
         if n <= len(self.seq):
             return self.seq[n - 1]
-        else:
-            t = self.fibo(n - 2) + self.fibo(n - 1)
-            self.seq.append(t)
-            return t
+
+        t = self.fibo(n - 2) + self.fibo(n - 1)
+        self.seq.append(t)
+        return t
 
 
 class DpTabFibonacci:
@@ -48,13 +47,12 @@ class DpTabFibonacci:
     def get(self, n):
         if n < 0:
             raise ValueError(f"Negative value {n} not supported!")
-        else:
-            return self.fibo(n)
+        return self.fibo(n)
 
     def fibo(self, n):
         if n <= len(self.seq):
             return self.seq[n - 1]
-        else:
-            for i in range(len(self.seq), n):
-                self.seq.append(self.seq[i - 2] + self.seq[i - 1])
-            return self.seq[n - 1]
+
+        for i in range(len(self.seq), n):
+            self.seq.append(self.seq[i - 2] + self.seq[i - 1])
+        return self.seq[n - 1]

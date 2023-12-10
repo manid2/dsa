@@ -9,10 +9,10 @@ MAX_WEIGHT = float('inf')
 class Graph:
     """This graph is represented using adjacency matrix"""
 
-    def __init__(self, vertices=0, edges=[]):
+    def __init__(self, vertices=0, edges=None):
         self.vertices = vertices if vertices else len(edges)
 
-        if self.is_valid_edges(edges):
+        if edges and self.is_valid_edges(edges):
             self.edges = edges
         else:
             self.edges = self.get_init_edges()
@@ -22,7 +22,7 @@ class Graph:
                 for row in range(self.vertices)]
 
     def is_valid_node(self, a):
-        return (a > -1 and a < self.vertices)
+        return -1 < a < self.vertices
 
     def is_valid_edges(self, edges):
         return (self.vertices == len(edges) and
@@ -36,7 +36,7 @@ class Graph:
         else:
             raise ValueError(f"Invalid nodes {a}, {b}, " +
                              "a valid node is in range " +
-                             "[0, {}]".format(self.vertices - 1))
+                             f"[0, {self.vertices - 1}]")
 
     def add_edges(self, edges):
         """Add all edges in the form of adjacency matrix to the graph"""
@@ -45,12 +45,12 @@ class Graph:
             self.edges = edges
         else:
             raise ValueError("Invalid adjacency matrix, " +
-                             "a valid matrix must be {0} x {0}"
-                             .format(self.vertices))
+                             "a valid matrix must be " +
+                             f"{self.vertices} x {self.vertices}")
 
     def print(self, start, d):
-        for v in range(len(d)):
-            print("{0}-{1}: {2}".format(start, v, d[v]))
+        for node, dist in enumerate(d):
+            print(f"{start}-{node}: {dist}")
 
     def no_edge(self, u, v):
         return self.edges[u][v] == -1
