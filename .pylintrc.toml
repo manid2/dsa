@@ -203,6 +203,7 @@ disable = [
 "missing-module-docstring",
 "raw-checker-failed",
 "suppressed-message",
+"too-few-public-methods",
 "use-implicit-booleaness-not-comparison-to-string",
 "use-implicit-booleaness-not-comparison-to-zero",
 "use-symbolic-message-instead",

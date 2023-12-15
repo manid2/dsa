@@ -26,7 +26,6 @@ class TestGreedyMethodMGraphs:
         assert res == exp_res
 
 
-# pylint: disable=too-few-public-methods
 class TestGreedyMethodLGraphs:
     g = _add_edges(UndirectedListGraph(5))
 
