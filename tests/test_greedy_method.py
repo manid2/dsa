@@ -1,4 +1,6 @@
 from graphs import UndirectedMatrixGraph, UndirectedListGraph
+from ds import KnapsackItem
+
 import greedy_method as gm
 
 
@@ -34,3 +36,14 @@ class TestGreedyMethodLGraphs:
         k = gm.KruskalsMST()
         _, res = k.kruskals_mst(self.g)
         assert res == exp_res
+
+class TestGreedyMethodKnapsack:
+    def test_fractional_knapsack(self):
+        exp_res = 240.0
+        items = [KnapsackItem(p, w)
+                 for p, w in [(60, 10),
+                              (100, 20),
+                              (120, 30)]]
+        capacity = 50
+        ks = gm.FractionalKnapsack(items, capacity)
+        assert ks.get() == exp_res
