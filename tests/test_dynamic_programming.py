@@ -1,3 +1,6 @@
+from graphs import MAX_WEIGHT
+from graphs import DirectedMatrixGraph
+
 import dynamic_programming as dp
 
 
@@ -37,3 +40,19 @@ def test_dynamic_programming_multi_stage_graph():
     g.add_edge(6, 7, 5)
     # stage 3: vertex 7 (sink)
     assert g.get_shortest_path() == exp_res
+
+
+def test_dynamic_programming_floyd_warshall():
+    exp_res = [[0, 3, 5, 6],
+               [5, 0, 2, 3],
+               [3, 6, 0, 1],
+               [2, 5, 7, 0]]
+
+    x = MAX_WEIGHT
+    g = DirectedMatrixGraph(4)
+    g.add_edges([[0, 3, x, 7],
+                 [8, 0, 2, x],
+                 [5, x, 0, 1],
+                 [2, x, x, 0]])
+    e = dp.floyd_warshall(g)
+    assert e == exp_res
