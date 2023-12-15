@@ -1,7 +1,6 @@
 from queue import PriorityQueue
 
-
-MAX_WEIGHT = float('inf')
+from graphs import MAX_WEIGHT
 
 
 def dijkstras_path(start, graph):

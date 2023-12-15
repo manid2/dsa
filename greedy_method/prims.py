@@ -1,4 +1,4 @@
-MAX_WEIGHT = float('inf')
+from graphs import MAX_WEIGHT
 
 
 def prims_mst(graph):

@@ -1,5 +1,9 @@
 # flake8: noqa: F401
 
-from .graph import Graph
-from .list_graph import ListGraph, DirectedListGraph, UndirectedListGraph
+import math
+
 from .matrix_graph import MatrixGraph, DirectedMatrixGraph, UndirectedMatrixGraph
+from .list_graph import ListGraph, DirectedListGraph, UndirectedListGraph
+from .graph import Graph
+
+MAX_WEIGHT = math.inf

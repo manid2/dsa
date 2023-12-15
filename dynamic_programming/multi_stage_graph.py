@@ -1,7 +1,4 @@
-from graphs import DirectedMatrixGraph
-
-
-MAX_WEIGHT = float('inf')
+from graphs import DirectedMatrixGraph, MAX_WEIGHT
 
 
 class MultiStageGraph(DirectedMatrixGraph):
