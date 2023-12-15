@@ -56,3 +56,14 @@ def test_dynamic_programming_floyd_warshall():
                  [2, x, x, 0]])
     e = dp.floyd_warshall(g)
     assert e == exp_res
+
+
+class TestDynamicProgrammingMatrixChainMultiplication:
+    exp_io = {(30, '(((A1A2)A3)A4)'): [1, 2, 3, 4, 3],
+              (0, 'A1'): [10, 20],
+              (722, '(A1A2)'): [19, 2, 19]}
+
+    def test_matrix_chain_multiplication(self):
+        for exp_res, li in self.exp_io.items():
+            mcm = dp.MatrixChainMultiplication(li)
+            assert mcm.get() == exp_res
