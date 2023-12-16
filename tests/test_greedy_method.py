@@ -68,3 +68,19 @@ class TestGreedyMethodHuffmanCoding:
 
         hc = gm.HuffmanCoding(chars_freqs)
         assert hc.compress() == exp_res
+
+
+class TestGreedyMethodOptimalMergePattern:
+    exp_io = {14: [2, 3, 4],
+              205: [5, 10, 20, 30, 30],
+              96: [8, 8, 8, 8, 8]}
+
+    def test_optimal_merge_pq(self):
+        for exp_res, li in self.exp_io.items():
+            opm = gm.OptimalMergePatternWithPQ(li)
+            assert opm.get() == exp_res
+
+    def test_optimal_merge_list(self):
+        for exp_res, li in self.exp_io.items():
+            opm = gm.OptimalMergePatternWithList(li)
+            assert opm.get() == exp_res
