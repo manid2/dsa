@@ -37,6 +37,7 @@ class TestGreedyMethodLGraphs:
         _, res = k.kruskals_mst(self.g)
         assert res == exp_res
 
+
 class TestGreedyMethodKnapsack:
     def test_fractional_knapsack(self):
         exp_res = 240.0
@@ -47,3 +48,23 @@ class TestGreedyMethodKnapsack:
         capacity = 50
         ks = gm.FractionalKnapsack(items, capacity)
         assert ks.get() == exp_res
+
+
+class TestGreedyMethodHuffmanCoding:
+    def test_huffman_coding(self):
+        exp_res = {'f': '0',
+                   'c': '100',
+                   'd': '101',
+                   'a': '1100',
+                   'b': '1101',
+                   'e': '111'}
+
+        chars_freqs = {'a': 5,
+                       'b': 9,
+                       'c': 12,
+                       'd': 13,
+                       'e': 16,
+                       'f': 45}
+
+        hc = gm.HuffmanCoding(chars_freqs)
+        assert hc.compress() == exp_res
