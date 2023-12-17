@@ -1,5 +1,8 @@
+import pytest
+
 from graphs import MAX_WEIGHT
-from graphs import DirectedMatrixGraph
+from graphs import DirectedMatrixGraph, DirectedListGraph
+from graphs import NegativeCycleError
 
 import dynamic_programming as dp
 
@@ -67,3 +70,20 @@ class TestDynamicProgrammingMatrixChainMultiplication:
         for exp_res, li in self.exp_io.items():
             mcm = dp.MatrixChainMultiplication(li)
             assert mcm.get() == exp_res
+
+
+class TestDynamicProgrammingBellamanFord:
+    ip1 = [[2, 1, -10], [3, 2, 3], [0, 3, 5], [0, 1, 4]]
+    ip2 = list(ip1)
+    ip2.append([1, 3, 5])
+
+    def test_bellman_ford(self):
+        exp_res = [0, -2, 8, 5]
+        g = DirectedListGraph(4, self.ip1)
+        bf = dp.BellmanFord(g)
+        assert bf.get() == exp_res
+
+    def test_bellman_ford_negative_cycle(self):
+        with pytest.raises(NegativeCycleError, match="Negative cycle found"):
+            g = DirectedListGraph(4, self.ip2)
+            dp.BellmanFord(g)
