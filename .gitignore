@@ -2,3 +2,6 @@ __pycache__
 
 # ignore virtual environment directory
 .dsavenv
+
+# ignore vim swap file
+*.swp
