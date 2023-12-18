@@ -3,5 +3,12 @@ __pycache__
 # ignore virtual environment directory
 .dsavenv
 
+# ignore tags
+cscope.files
+cscope.out
+cscope.out.in
+cscope.out.po
+tags
+
 # ignore vim swap file
 *.swp

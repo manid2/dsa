@@ -6,7 +6,7 @@ DSA_PYTHON_MODULES:=$(sort $(dir $(shell git ls-files -- '*/__init__.py')))
 
 PYLINT_CMD:=pylint --rcfile=.pylintrc.toml
 
-.PHONY: .dsavenv tests check clean lint format
+.PHONY: .dsavenv tests check clean lint format tags
 
 .dsavenv: .dsavenv/done
 
@@ -35,3 +35,6 @@ lint: flake8 pylint
 
 format: .dsavenv
 	$(DSAVENV_ACTIVATE_CMD) autopep8 -iar $(DSA_PYTHON_MODULES)
+
+tags:
+	./mktags
