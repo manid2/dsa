@@ -40,8 +40,6 @@ class MatrixChainMultiplication:
             for i in range(1, self.n - d):
                 j = i + d
                 self._calc_min(i, j)
-        print(f"{self.s}")
-        print(f"{self.m}")
 
     def _paren(self, i, j):
         """

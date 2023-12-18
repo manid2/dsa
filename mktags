@@ -15,8 +15,7 @@ skip_dirs="( -name docs ) -prune -o"
 
 source_dirs="."
 
-find_sources()
-{
+find_sources () {
 	# shellcheck disable=2086
 	find $source_dirs $ignore $skip_dirs -name $1 -type f -printf "%P\n"
 }
@@ -33,8 +32,7 @@ cpp_sources () {
 	find_sources '*.[ch]pp'
 }
 
-all_sources()
-{
+all_sources () {
 	py_sources
 	c_sources
 	cpp_sources
