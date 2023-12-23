@@ -3,6 +3,7 @@ import pytest
 from graphs import MAX_WEIGHT
 from graphs import DirectedMatrixGraph, DirectedListGraph
 from graphs import NegativeCycleError
+from ds import KnapsackItem
 
 import dynamic_programming as dp
 
@@ -87,3 +88,16 @@ class TestDynamicProgrammingBellamanFord:
         with pytest.raises(NegativeCycleError, match="Negative cycle found"):
             g = DirectedListGraph(4, self.ip2)
             dp.BellmanFord(g)
+
+
+class TestDynamicProgrammingKnapsack:
+    def test_zero_one_knapsack(self):
+        exp_res = (8, [0, 1, 0, 1])
+        items = [KnapsackItem(p, w)
+                 for p, w in [(1, 2),
+                              (2, 3),
+                              (5, 4),
+                              (6, 5)]]
+        capacity = 8
+        ks = dp.ZeroOneKnapsack(items, capacity)
+        assert ks.get() == exp_res
