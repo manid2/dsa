@@ -120,3 +120,21 @@ class TestDynamicProgrammingOptimalBST:
                  for k, p, q in zip(keys, success, unsuccess)]
         ob = dp.OptimalBST(items)
         assert ob.get() == exp_res
+
+
+class TestDynamicProgrammingTravellingSalesman:
+    def test_travelling_salesman(self):
+        source = 0
+        vertices = 4
+
+        exp_res_1 = (50, 't')
+        edges_1 = [[0, 20, 42, 25],
+                   [20, 0, 30, 34],
+                   [42, 30, 0, 10],
+                   [25, 34, 10, 0]]
+
+        _io = [(edges_1, exp_res_1)]
+
+        for edges, exp_res in _io:
+            g = dp.TravellingSalesman(source, vertices, edges)
+            assert g.get() == exp_res
