@@ -1,5 +1,7 @@
 import math
 
+from binary_trees import BinaryNode, BinarySearchTree
+
 
 class OptimalBSTItem:
     def __init__(self, key, success, unsuccess):
@@ -61,8 +63,23 @@ class OptimalBST:
         return min_cost
 
     def _create_bst(self):
-        # TODO construct binary search tree from root table i.e. 'self.r[][]'
-        return 't'
+        """
+        Binary search tree is created recursively by fetching key index from
+        root table and appending this key to binary tree.
+        """
+        root = self._create_binary_tree(0, self.n)
+        return BinarySearchTree(root)
+
+    def _create_binary_tree(self, i, j):
+        d = j - i
+        if d < 1 or d > self.n:
+            return None
+
+        _k = self.r[i][j]
+        node = BinaryNode(self.k[_k])
+        node.left = self._create_binary_tree(i, _k - 1)
+        node.right = self._create_binary_tree(_k, j)
+        return node
 
     def get(self):
         return self.m, self.t
