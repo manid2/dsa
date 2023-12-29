@@ -19,8 +19,6 @@ def test_dynamic_programming_fibonacci():
     assert ft.get(5) == exp_res[5]
     assert ft.get(10) == exp_res[10]
 
-    # TODO: Add negative tests
-
 
 def test_dynamic_programming_multi_stage_graph():
     exp_res = ([0, 1, 5, 7], 9)
