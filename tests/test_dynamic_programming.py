@@ -99,3 +99,16 @@ class TestDynamicProgrammingKnapsack:
         capacity = 8
         ks = dp.ZeroOneKnapsack(items, capacity)
         assert ks.get() == exp_res
+
+
+class TestDynamicProgrammingOptimalBST:
+    def test_optimal_bst(self):
+        exp_res = (2, 't')
+        items = [dp.OptimalBSTItem(k, p, q)
+                 for k, p, q in [(0, 0, 2),
+                                 (10, 3, 3),
+                                 (20, 3, 1),
+                                 (30, 1, 1),
+                                 (40, 1, 1,)]]
+        ob = dp.OptimalBST(items)
+        assert ob.get() == exp_res
