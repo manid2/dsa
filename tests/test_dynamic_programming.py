@@ -138,3 +138,18 @@ class TestDynamicProgrammingTravellingSalesman:
         for edges, exp_res in _io:
             g = dp.TravellingSalesman(source, vertices, edges)
             assert g.get() == exp_res
+
+
+class TestDynamicProgrammingLongestCommonSubsequence:
+    def test_lcs(self):
+        exp_res_1 = (3, "one")
+        strs_1 = ("stone", "longest")
+
+        exp_res_2 = (6, "gaming")
+        strs_2 = ("programming", "gaming")
+
+        _io = [(strs_1, exp_res_1), (strs_2, exp_res_2)]
+
+        for strs, exp_res in _io:
+            lcs = dp.LongestCommonSubsequence(strs[0], strs[1])
+            assert lcs.get() == exp_res

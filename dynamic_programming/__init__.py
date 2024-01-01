@@ -8,3 +8,4 @@ from .bellman_ford import BellmanFord
 from .knapsack import ZeroOneKnapsack
 from .optimal_bst import OptimalBSTItem, OptimalBST
 from .travelling_salesman import TravellingSalesman
+from .longest_common_subsequence import LongestCommonSubsequence
