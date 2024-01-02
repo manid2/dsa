@@ -12,3 +12,6 @@ tags
 
 # ignore vim swap file
 *.swp
+
+# ignore documentation output directory
+docs/output

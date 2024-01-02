@@ -1,4 +1,4 @@
-all: tests check
+all: tests check docs
 
 DSAVENV_ACTIVATE_FILE:=.dsavenv/bin/activate
 DSAVENV_ACTIVATE_CMD:=. $(DSAVENV_ACTIVATE_FILE);
@@ -6,7 +6,7 @@ DSA_PYTHON_MODULES:=$(sort $(dir $(shell git ls-files -- '*/__init__.py')))
 
 PYLINT_CMD:=pylint --rcfile=.pylintrc.toml
 
-.PHONY: .dsavenv tests check clean lint format tags
+.PHONY: .dsavenv tests check clean lint format tags docs clean-docs
 
 .dsavenv: .dsavenv/done
 
@@ -38,3 +38,9 @@ format: .dsavenv
 
 tags:
 	./mktags
+
+docs:
+	make -C docs
+
+clean-docs:
+	make -C docs clean
