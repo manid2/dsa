@@ -14,3 +14,8 @@
   data-y_margin="18"
 ></script>
 {% endblock %}
+
+{% block footer %}
+  <script src="{{ pathto('_static/scripts/ads.js', 1) }}"></script>
+  {{ super() }}
+{% endblock %}
