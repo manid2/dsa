@@ -24,6 +24,8 @@ intersphinx_mapping = {
     'sphinx': ('https://www.sphinx-doc.org/en/master/', None),
 }
 intersphinx_disabled_domains = ['std']
+templates_path = ['_templates']
 
 # -- Options for HTML output
+html_title = 'manid2'
 html_theme = 'sphinx_rtd_theme'
