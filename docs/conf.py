@@ -29,3 +29,5 @@ templates_path = ['_templates']
 # -- Options for HTML output
 html_title = 'manid2'
 html_theme = 'sphinx_rtd_theme'
+html_static_path = ['_static']
+html_favicon = html_static_path[0] + '/awesome_author.svg'
