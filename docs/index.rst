@@ -18,7 +18,7 @@ Table of Contents
 
    algorithms/index
    backtrack/index
-   sde_general/index.rst
+   sde/index.rst
 
 Indices
 =======
