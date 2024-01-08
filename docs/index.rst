@@ -16,6 +16,7 @@ Table of Contents
 .. toctree::
    :maxdepth: 2
 
+   algorithms/index
    backtrack/index
 
 Indices
