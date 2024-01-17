@@ -15,3 +15,6 @@ tags
 
 # ignore documentation output directory
 docs/output
+
+# ignore c/cpp compiled output
+a.out
