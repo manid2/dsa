@@ -1,21 +1,24 @@
-// Given a vector of strings representing unsigned numbers, convert the numbers to
-// a collection of std::uint16_t in which the odd numbers appear before the even ones
-// and output the data
-
-// feel free to use https://en.cppreference.com/
+/**
+ * Given a vector of strings representing unsigned numbers, convert the
+ * numbers to a collection of std::uint16_t in which the odd numbers appear
+ * before the even ones and output the data
+ */
 
 #include <string>
 #include <vector>
 #include <iostream>
 #include <stdexcept>
+#include <algorithm>
 
-auto input = std::vector<std::string>{"9", "0", "49", "2", "100", "not a number" , "12 not a number too"};
+auto input = std::vector<std::string>{"9", "0", "49", "2", "100",
+	"not a number" , "12 not a number too"};
 
 bool is_number(const std::string &s) {
 	return !s.empty() && std::all_of(s.begin(), s.end(), ::isdigit);
 }
 
-std::vector<std::uint16_t> getOddEvenNums (const std::vector<std::string> &input) {
+std::vector<std::uint16_t>
+getOddEvenNums (const std::vector<std::string> &input) {
 	std::vector<std::uint16_t> oen;
 	for (auto &a : input) {
 		std::uint16_t d = 0;
@@ -26,10 +29,12 @@ std::vector<std::uint16_t> getOddEvenNums (const std::vector<std::string> &input
 			}
 		}
 		catch(std::invalid_argument const& ex) {
-			std::cout << "std::invalid_argument::what(): " << ex.what() << '\n';
+			std::cout << "std::invalid_argument::what(): " <<
+				ex.what() << '\n';
 		}
 		catch(std::out_of_range const& ex) {
-			std::cout << "std::out_of_range::what(): " << ex.what() << '\n';
+			std::cout << "std::out_of_range::what(): " <<
+				ex.what() << '\n';
 		}
 	}
 
