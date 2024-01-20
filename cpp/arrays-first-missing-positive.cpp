@@ -44,31 +44,28 @@
 
 using namespace std;
 
-int firstMissingPositive(vector<int>& a) {
+int firstMissingPositive(vector<int> &a)
+{
 	int n = a.size();
 	for (int i = 0; i < n; i++)
-		while (a[i] > 0 && a[i] <= n &&
-		       a[a[i] - 1] != a[i])
+		while (a[i] > 0 && a[i] <= n && a[a[i] - 1] != a[i])
 			swap(a[i], a[a[i] - 1]);
 
 	for (int i = 0; i < n; i++)
-		if (a[i] != i + 1)
-			return i + 1;
+		if (a[i] != i + 1) return i + 1;
 	return n + 1;
 }
 
 int main(int argc, char *argv[])
 {
-	vector<vector<int>> ip{{1, 2, 0},
-	                       {3, 4, -1, 1},
-	                       {7, 8, 9, 11, 12}};
+	vector<vector<int>> ip{{1, 2, 0}, {3, 4, -1, 1}, {7, 8, 9, 11, 12}};
 	vector op{3, 2, 1};
 
 	for (size_t i = 0; i < ip.size(); i++) {
 		int t = firstMissingPositive(ip[i]);
 		if (op[i] != t) {
-			cerr << "test failed: expected " << op[i] <<
-			        ", actual" << t << endl;
+			cerr << "test failed: expected " << op[i]
+			     << ", actual" << t << endl;
 			return 1;
 		}
 		cout << t << endl;

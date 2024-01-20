@@ -10,8 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void
-rev_word (char *w)
+void rev_word(char *w)
 {
 	size_t j = strlen(w) - 1;
 	size_t i = 0;
@@ -22,8 +21,7 @@ rev_word (char *w)
 	}
 }
 
-void
-rev_list (char a[][10], size_t n)
+void rev_list(char a[][10], size_t n)
 {
 	char t[10];
 	for (int i = 0, j = n - 1; i < j; i++, j--) {
@@ -33,37 +31,31 @@ rev_list (char a[][10], size_t n)
 	}
 }
 
-void
-rev_list_words (char a[][10], size_t n)
+void rev_list_words(char a[][10], size_t n)
 {
 	rev_list(a, n);
-	for (int i = 0; i < n; i++) {
-		rev_word (a[i]);
-	}
+	for (int i = 0; i < n; i++) { rev_word(a[i]); }
 }
 
-void
-print_a (char a[][10], size_t n)
+void print_a(char a[][10], size_t n)
 {
-	printf ("{");
+	printf("{");
 	for (int i = 0; i < n; i++) {
-		if (i)
-			printf (", ");
-		printf ("%s", a[i]);
+		if (i) printf(", ");
+		printf("%s", a[i]);
 	}
-	printf ("}\n");
+	printf("}\n");
 }
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	char a[][10] = {"cisco", "juniper", "arista"};
-	size_t n = sizeof (a) / sizeof (a[0]);
+	size_t n = sizeof(a) / sizeof(a[0]);
 
-	printf ("Input: ");
-	print_a (a, n);
-	rev_list_words (a, n);
-	printf ("Output: ");
-	print_a (a, n);
+	printf("Input: ");
+	print_a(a, n);
+	rev_list_words(a, n);
+	printf("Output: ");
+	print_a(a, n);
 	return 0;
 }

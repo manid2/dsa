@@ -28,17 +28,15 @@
 
 using namespace std;
 
-int thirdMax(vector<int>& a) {
+int thirdMax(vector<int> &a)
+{
 	set<int> m;
-	for(int &e : a)
-	{
+	for (int &e : a) {
 		m.insert(e);
-		if(m.size() > 3)
-			m.erase(*m.begin());
+		if (m.size() > 3) m.erase(*m.begin());
 	}
 
-	if(m.size() == 3)
-		return *m.begin();
+	if (m.size() == 3) return *m.begin();
 
 	return *prev(m.end());
 }

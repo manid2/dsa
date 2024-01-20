@@ -36,9 +36,9 @@
 
 using namespace std;
 
-int minParens(const string &s) {
-	if (s.empty())
-		return 0;
+int minParens(const string &s)
+{
+	if (s.empty()) return 0;
 
 	int b = 0, r = 0;
 
@@ -60,8 +60,8 @@ int main(int argc, char *argv[])
 	for (size_t i = 0; i < ip.size(); i++) {
 		int t = minParens(ip[i]);
 		if (op[i] != t) {
-			cerr << "test failed: expected " << op[i] <<
-				", actual" << t << endl;
+			cerr << "test failed: expected " << op[i]
+			     << ", actual" << t << endl;
 			return 1;
 		}
 		cout << t << endl;

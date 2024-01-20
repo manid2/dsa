@@ -9,30 +9,31 @@ void pop();
 
 int queue[SIZE], front = -1, rear = -1;
 
-int main(int a, char **v) {
+int main(int a, char **v)
+{
 	// push elements
-	push (1);
-	push (2);
-	push (3);
-	push (4);
-	push (5);
+	push(1);
+	push(2);
+	push(3);
+	push(4);
+	push(5);
 
 	// elements in queue now: 5, 4, 3, 2, 1
 
 	// pop elements
-	pop ();
-	pop ();
+	pop();
+	pop();
 
 	// elements in queue now: 5, 4, 3
 	return 0;
 }
 
-int push (int value) {
+int push(int value)
+{
 	if (rear == SIZE - 1)
 		return -1;
 	else {
-		if (front == -1)
-			front = 0;
+		if (front == -1) front = 0;
 		rear++;
 		queue[rear] = value;
 		return rear;
@@ -40,7 +41,8 @@ int push (int value) {
 	return 0;
 }
 
-int pop () {
+int pop()
+{
 	int ret = -1;
 	if (front == -1)
 		return ret;
@@ -48,8 +50,7 @@ int pop () {
 		ret = front;
 		queue[ret] = 0; // reset value here
 		front++;
-		if (front > rear)
-			front = rear = -1;
+		if (front > rear) front = rear = -1;
 	}
 	return ret;
 }
