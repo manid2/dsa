@@ -33,8 +33,13 @@ pylint: .dsavenv
 lint: flake8 pylint
 	$(info Linting OK.)
 
-format: .dsavenv
+cpp-format:
+	clang-format -i cpp/*.c cpp/*.cpp
+
+py-format: .dsavenv
 	$(DSAVENV_ACTIVATE_CMD) autopep8 -iar $(DSA_PYTHON_MODULES)
+
+format: cpp-format py-format
 
 tags:
 	./mktags
