@@ -1,43 +1,81 @@
-#include <algorithm>
-#include <iostream>
+/**
+ * Longest Substring Without Repeating Characters
+ * ==============================================
+ *
+ * Leetcode: [3. Longest Substring Without Repeating Characters][lc3]
+ *
+ * Given a string s, find the length of the longest substring without
+ * repeating characters.
+ *
+ * Tags: #strings, #medium
+ *
+ * Example 1:
+ * 
+ * Input: s = "abcabcbb"
+ * Output: 3
+ * Explanation: The answer is "abc", with the length of 3.
+ * 
+ * Example 2:
+ * 
+ * Input: s = "bbbbb"
+ * Output: 1
+ * Explanation: The answer is "b", with the length of 1.
+ * 
+ * Example 3:
+ * 
+ * Input: s = "pwwkew"
+ * Output: 3
+ * Explanation: The answer is "wke", with the length of 3.
+ * Notice that the answer must be a substring, "pwke" is a subsequence and not a substring.
+ *
+ * Solution
+ * --------
+ *
+ * Refer:
+ *
+ * [sliding window technique][lcdi1]
+ * [Optimized sliding window solution][ea1]
+ *
+ * [lc3]: https://leetcode.com/problems/longest-substring-without-repeating-characters/
+ * [lcdi1]: https://discuss.leetcode.com/topic/30941/here-is-a-10-line-template-that-can-solve-most-substring-problems
+ * [ea1]: https://www.enjoyalgorithms.com/blog/longest-substring-without-repeating-characters
+ */
+
 #include <bits/stdc++.h>
 
 using namespace std;
 
-/* Refer
- * https://www.enjoyalgorithms.com/blog/longest-substring-without-repeating-characters
- */
-
-// optimizing sliding window Approach
-int lengthOfLongestSubstring(string str)
+/* Use optimized sliding window */
+int lengthOfLongestSubstring(string s)
 {
-	int n = str.size();
-	if (n == 0)
-		return 0;
-	bool visited[256] = {};
-	int maxLength = 0;
-	int i = 0, j = 0;
-	while (i < n && j < n)
-	{
-		if (visited[str[j]] == false)
-		{
-			visited[str[j]] = true;
-			j = j + 1;
-			maxLength = max(maxLength, j - i);
+	size_t n = s.size();
+	vector m(128, 0);
+	int b = 0, e = 0, d = 0;
+	while (b < n && e < n) {
+		if (!m[s[e]]++) {
+			e++;
+			d = max(d, e - b);
 		}
 		else
-		{
-			visited[str[i]] = false;
-			i = i + 1;
-		}
+			m[s[b++]] = 0;
 	}
-	return maxLength;
+	return d;
 }
 
 int main(int ac, char **av)
 {
-	// Your code goes here;
-	string s = "Hello";
-	cout << lengthOfLongestSubstring(s) << endl;
+	vector<string> ip{"", "abcabcbb", "bbbbb", "pwwkew"};
+	vector<int> op{0, 3, 1, 3};
+
+	for (size_t i = 0; i < ip.size(); i++) {
+		int t = lengthOfLongestSubstring(ip[i]);
+		if (op[i] != t) {
+			cerr << "test failed: "
+			        "expected " << op[i] << ", "
+			        "actual " << t << endl;
+			return 1;
+		}
+		cout << t << endl;
+	}
 	return 0;
 }
