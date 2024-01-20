@@ -45,8 +45,47 @@
 
 using namespace std;
 
-/* Use optimized sliding window */
-int lengthOfLongestSubstring(string s)
+/* Time complexity: O(n^3) cubic */
+int _01_brute_force(string s)
+{
+	auto is_uniq = [](string s, int b, int e) -> bool
+	{
+		vector m(128, 0);
+		for (int k = b; k <= e; k++) {
+			if (m[s[k]]++)
+				return false;
+		}
+		return true;
+	};
+
+	size_t n = s.size();
+	int d = 0;
+	for (int b = 0; b < n; b++)
+		for (int e = b; e < n; e++)
+			if (is_uniq (s, b, e))
+				d = max(d, e - b + 1);
+	return d;
+}
+
+/* Time complexity: O(n^2) square */
+int _02_sliding_window(string s)
+{
+	size_t n = s.size();
+	int b = 0, e = 0, d = 0;
+	while (b < n) {
+		vector m(128, 0);
+		e = b;
+		while (e < n && !m[s[e]]) {
+			d = max(d, e - b + 1);
+			m[s[e++]]++;
+		}
+		b++;
+	}
+	return d;
+}
+
+/* Time complexity: O(n) linear */
+int _03_optmized_sliding_window(string s)
 {
 	size_t n = s.size();
 	vector m(128, 0);
@@ -62,20 +101,45 @@ int lengthOfLongestSubstring(string s)
 	return d;
 }
 
-int main(int ac, char **av)
+/* Time complexity: O(n) linear */
+int _04_counter_sliding_window(string s)
 {
-	vector<string> ip{"", "abcabcbb", "bbbbb", "pwwkew"};
-	vector<int> op{0, 3, 1, 3};
+	vector<int> m(128,0);
+	int c=0, b=0, e=0, d=0; 
+	while (e < s.size()) {
+		if (m[s[e++]]++) c++; 
+		while (c) if (m[s[b++]]-- > 1) c--;
+		d = max(d, e - b);
+	}
+	return d;
+}
 
+typedef std::function<int(std::string)> func_t;
+
+void test_impl (vector<string> ip, vector<int> op, func_t impl)
+{
 	for (size_t i = 0; i < ip.size(); i++) {
-		int t = lengthOfLongestSubstring(ip[i]);
+		int t = impl(ip[i]);
 		if (op[i] != t) {
 			cerr << "test failed: "
 			        "expected " << op[i] << ", "
 			        "actual " << t << endl;
-			return 1;
+			exit (1);
 		}
 		cout << t << endl;
 	}
+}
+
+int main(int ac, char **av)
+{
+	vector<string> ip{"", "abcabcbb", "bbbbb", "pwwkew"};
+	vector<int> op{0, 3, 1, 3};
+	vector<func_t> impls{_01_brute_force,
+	                     _02_sliding_window,
+	                     _03_optmized_sliding_window,
+	                     _04_counter_sliding_window};
+
+	for (auto& impl: impls)
+		test_impl (ip, op, impl);
 	return 0;
 }
