@@ -14,12 +14,16 @@ Table of Contents
 =================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    algorithms/index
+   binary_trees/index
+   graphs/index
    backtrack/index
-   sde/index.rst
-   sde/interviews/index.rst
+   greedy_method/index
+   dynamic_programming/index
+   sde/index
+   sde/interviews/index
 
 Indices
 =======
