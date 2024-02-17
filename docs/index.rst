@@ -1,5 +1,5 @@
 ==============================
-Data structures and algortihms
+Data structures and algorithms
 ==============================
 
 This book has the documentation and code for data structures and algorithms.
