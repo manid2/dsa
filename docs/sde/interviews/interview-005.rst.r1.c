@@ -19,21 +19,20 @@
  *    4
  */
 
-typedef struct Node{
+typedef struct Node {
 	stuct Node next;
 	int data;
 } List;
 
 /* Time complexity: O(n^2) square */
-List* cmn_node (List *ah, List *bh)
+List *cmn_node(List *ah, List *bh)
 {
 	List *a = ah;
 	List *b = bh;
 
 	while (a) {
 		while (b) {
-			if (a->next == b->next)
-				return a->next;
+			if (a->next == b->next) return a->next;
 			b = b->next;
 		}
 		a = a->next;
@@ -42,7 +41,7 @@ List* cmn_node (List *ah, List *bh)
 }
 
 /* Time compelxity: O(n) linear */
-List* cmn_node (List *ah, List *bh)
+List *cmn_node(List *ah, List *bh)
 {
 	List *a = ah;
 	List *b = bh;

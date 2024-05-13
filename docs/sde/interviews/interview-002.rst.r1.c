@@ -14,20 +14,18 @@ int main(int argc, char *argv[])
 {
 	char *p = "abc";
 	p[0] = 'c';
-	printf ("%c\n", *p);
+	printf("%c\n", *p);
 	return 0;
 }
-
 
 typedef struct Node {
 	int data;
 	struct Node *next;
 } List;
 
-
-List* reverse_list (List *head)
+List *reverse_list(List *head)
 {
-	List *curr=head, *prev=NULL, *next=NULL;
+	List *curr = head, *prev = NULL, *next = NULL;
 	while (curr->next) {
 		next = curr->next;
 		curr->next = prev;
@@ -37,23 +35,21 @@ List* reverse_list (List *head)
 	return curr;
 }
 
-
 char mem[1024];
 
 typedef struct memblock {
 	size_t size;
 	bool is_free;
 	void *ptr;
-} MemBlocks
+} MemBlocks;
 
-void* my_malloc (size_t size)
+void *my_malloc(size_t size)
 {
-	if (!size)
-		return NULL;
+	if (!size) return NULL;
 
 	MemBlocks blocks[10];
 
-	for (int i=0; i<10; i++) {
+	for (int i = 0; i < 10; i++) {
 		if (blocks[i].is_free) {
 			blocks.size = size;
 			// handle mem overflow

@@ -7,9 +7,10 @@ pthread_cond_variable_t cv;
 pthread_mutex_t mx;
 pthread_lock_t lock;
 
-void* print_odd(void*) {
+void *print_odd(void *)
+{
 	pthread_lock_lock(lock, mx);
-	while(pthread_cond_wait()) {
+	while (pthread_cond_wait()) {
 		if (num % 2 == 0) continue; // if even then wait
 		printf("%d\n", num++);
 		pthread_cond_notify();
@@ -17,9 +18,10 @@ void* print_odd(void*) {
 	pthread_lock_unlock(lock, mx);
 }
 
-void* print_even(void*) {
+void *print_even(void *)
+{
 	pthread_lock_lock(mx);
-	while(pthread_cond_wait() && num) {
+	while (pthread_cond_wait() && num) {
 		if (num % 2 != 0) continue; // if odd then wait
 		printf("%d\n", num++);
 		pthread_cond_notify();
@@ -28,11 +30,10 @@ void* print_even(void*) {
 }
 
 // why condition variable is used?
-while(!condition) { // uses cpu
-	sleep (1);
+while (!condition) { // uses cpu
+	sleep(1);
 }
 // do some task
-
 
 int main()
 {
@@ -56,18 +57,22 @@ typedef struct _node {
 	struct _node *next;
 } Node
 
-// odd:  1 -> 2 -> 3 -> 4 -> 5, delete 3
-// even: 1 -> 2 -> 3 -> 4, delete 2
-Node* delete_mid_node(Node *head)
+    // odd:  1 -> 2 -> 3 -> 4 -> 5, delete 3
+    // even: 1 -> 2 -> 3 -> 4, delete 2
+    Node *
+    delete_mid_node(Node *head)
 {
 	Node *temp = head;
 	Node *fast = temp, *slow = temp;
 	Node *prev = NULL;
 
 	if (!temp) return NULL;
-	if (!temp->next) { free(temp); return NULL;}
+	if (!temp->next) {
+		free(temp);
+		return NULL;
+	}
 
-	while(fast->next && fast->next->next) {
+	while (fast->next && fast->next->next) {
 		fast = fast->next->next;
 		prev = slow;
 		slow = slow->next;

@@ -8,7 +8,7 @@
  * Output: [1 2 3 0 0] N=5, [6-5, 2+5+5-5, 3+5+5, 0, 0]
  */
 
-void remove_repeated(int a[]. int size)
+void remove_repeated(int a[].int size)
 {
 	// x ^ 0 = x
 	// x ^ x = 0
@@ -18,22 +18,19 @@ void remove_repeated(int a[]. int size)
 		a[id] += size;
 	}
 
-	for (int i=0; i<size; i++) {
-		while (a[i] / size >= 2 ) a[i] -= size;
+	for (int i = 0; i < size; i++) {
+		while (a[i] / size >= 2) a[i] -= size;
 	}
 }
 
-int clear_bit(int a, int pos)
-{
-	return (a & ~(1 << pos));
-}
+int clear_bit(int a, int pos) { return (a & ~(1 << pos)); }
 
 int get_bit_count(int a)
 {
 	// 1101
 	int count = 0;
 	while (a) {
-		if (a & 1) count ++;
+		if (a & 1) count++;
 		a = a >> 1;
 	}
 	return count;
@@ -44,6 +41,6 @@ typedef struct Node {
 	char c1, ch2;
 } List;
 
-sizeof (List);
+sizeof(List);
 
-#define get_st_mem_offset (st, mem) (&(st *)->mem)
+#define get_st_mem_offset (st, mem)(&(st *)->mem)

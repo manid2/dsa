@@ -20,8 +20,7 @@ int rev_int(int num)
 		int r = t % 10;
 		// check int overflow
 		long l = (rs + r) * 10;
-		if ((l > INT_MAX) || (l > INT_MIN))
-			return 0;
+		if ((l > INT_MAX) || (l > INT_MIN)) return 0;
 		t /= 10;
 		rs = l;
 	}

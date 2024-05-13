@@ -2,42 +2,45 @@
 // observer & state pattern
 
 // exposed to client code
-class BaseState {
-private:
-	BaseState* state;
-	BaseState* next;
+class BaseState
+{
+	private:
+	BaseState *state;
+	BaseState *next;
 
-public:
-	BaseState* nextState() {
-		return state->next;
-	}
+	public:
+	BaseState *nextState() { return state->next; }
 }
 
-class StartState: public BaseState {
-private:
-	BaseState* next;
+class StartState : public BaseState
+{
+	private:
+	BaseState *next;
 
-public:
+	public:
 	setNext() { next = new RunState; }
 }
 
-class RunState: public BaseState {
-private:
-	BaseState* next;
+class RunState : public BaseState
+{
+	private:
+	BaseState *next;
 
-public:
+	public:
 	setNext() { next = new StopState; }
 }
 
-class StopState: public BaseState {
-private:
-	BaseState* next;
+class StopState : public BaseState
+{
+	private:
+	BaseState *next;
 
-public:
+	public:
 	setNext() { next = NULL; }
 }
 
-int main() {
+int main()
+{
 	BaseState *state = new StartState();
 	// do some task & change state
 	state = state->nextState();
@@ -52,30 +55,36 @@ enum VehicleType {
 	Bike
 }
 
-class Vehicle {
-public:
+class Vehicle
+{
+	public:
 	virtual void run(void) = 0;
 }
 
-class Car: public Vehicle {
-public:
+class Car : public Vehicle
+{
+	public:
 	void run(void) { cout << "car run" << endl; }
 }
 
-class Bike: public Vehicle {
-public:
+class Bike : public Vehicle
+{
+	public:
 	void run(void) { cout << "car run" << endl; }
 }
 
-class VehicleFactory {
-public:
-	Vehicle* createVehicle(VehicleType vt) {
-		switch(vt) {
+class VehicleFactory
+{
+	public:
+	Vehicle *createVehicle(VehicleType vt)
+	{
+		switch (vt) {
 		}
 	}
 }
 
-int main() {
+int main()
+{
 	BaseState *state = new StartState();
 	// do some task & change state
 	state = state->nextState();
@@ -86,14 +95,16 @@ int main() {
 
 // inheritance
 
-class Base {
-public:
+class Base
+{
+	public:
 	virtual void foo();
 	virtual void bar(int);
 };
 
-class Derived : public Base {
-public:
+class Derived : public Base
+{
+	public:
 	void foo() @override; // no error
 	void bar() @override; // error int is not provided
 };
@@ -101,12 +112,14 @@ public:
 //===
 
 NonCopyable() = default;
-NonCopyable(const NonCopyable&) = delete;
-NonCopyable& operator=(const NonCopyable&) = delete;
+NonCopyable(const NonCopyable &) = delete;
+NonCopyable &operator=(const NonCopyable &) = delete;
 
-class AssignOp {
-public:
-	AssignOp operator=(const AssignOp& other) {
+class AssignOp
+{
+	public:
+	AssignOp operator=(const AssignOp &other)
+	{
 		*this = other;
 		return *this;
 	}
@@ -119,19 +132,19 @@ b = a; // assign operator is called
 // lvalue, rvalue
 b = func(); // func() -> a, temp object it is rvalue
 
-std::move(object&& c)
+std::move(object &&c);
 
 // lamda functions: anonymous
-auto eq = [](int a, int b) {return a == b}
+auto eq = [](int a, int b) { return a == b };
 std::compare(list1, list2, eq);
-std::compare(list1, list2, [](int a, int b) {return a == b});
+std::compare(list1, list2, [](int a, int b) { return a == b });
 
 // threads
 int thread_func(int num)
 {
-	for(;;) {
+	for (;;) {
 		cout << num++ << endl;
-		sleep (2);
+		sleep(2);
 	}
 }
 
@@ -149,14 +162,14 @@ int main()
 // 3. barriers
 
 // templates
-template<typename T>
-T func(T a, T b) {
+template <typename T> T func(T a, T b)
+{
 	T c = a + b;
 	return c;
 }
 
-template<>
-T func<ClassType>(ClassType a, ClassType b) {
+template <> T func<ClassType>(ClassType a, ClassType b)
+{
 	T c = a + b;
 	return c;
 }
@@ -169,12 +182,13 @@ T func<ClassType>(ClassType a, ClassType b) {
 int sum_2(std::vector<int> nums)
 {
 	int max_sum = 0;
-	for(int i = 0; i < nums.size() - 1; i++) {
+	for (int i = 0; i < nums.size() - 1; i++) {
 		int curr_sum = 0;
-		for(int j = i + 1; i < nums.size(); i++) {
+		for (int j = i + 1; i < nums.size(); i++) {
 			curr_sum = std::max(curr_sum, nums[i] + nums[j]);
 		}
-		max_sum = std::max(max_sum, curr_sum);;
+		max_sum = std::max(max_sum, curr_sum);
+		;
 	}
 	return max_sum;
 }

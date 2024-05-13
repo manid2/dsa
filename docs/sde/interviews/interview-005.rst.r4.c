@@ -2,22 +2,19 @@
  * 2D dynamic array
  */
 
-char** alloc_2d(int rows, int cols)
+char **alloc_2d(int rows, int cols)
 {
-	char **matrix = (void *)malloc (rows);
-	memset (matrix, 0, rows);
-	if (!matrix)
-		return NULL;
+	char **matrix = (void *)malloc(rows);
+	memset(matrix, 0, rows);
+	if (!matrix) return NULL;
 
-	for (int i=0; i< rows; i++) {
-		matrix[i] = (void *)malloc (cols);
-		if (!matrix[i])
-			goto freecols;
+	for (int i = 0; i < rows; i++) {
+		matrix[i] = (void *)malloc(cols);
+		if (!matrix[i]) goto freecols;
 	}
 
 freecols:
-	for (int i=0; i < rows; i++)
-		free (matrix[i]);
+	for (int i = 0; i < rows; i++) free(matrix[i]);
 
 	return matrix;
 }
@@ -41,9 +38,9 @@ typedef struct map {
 void del_dups(List *head)
 {
 	hash_map m[];
-	List *curr=head;
+	List *curr = head;
 
-	int i=0;
+	int i = 0;
 	List *prev = head;
 	while (curr->next) {
 		m[i].k = curr->data;
@@ -51,7 +48,7 @@ void del_dups(List *head)
 		prev = curr;
 		if (m[i].v > 1) {
 			List *t = curr->next;
-			free (curr);
+			free(curr);
 			curr = t;
 		}
 		curr = curr->next;

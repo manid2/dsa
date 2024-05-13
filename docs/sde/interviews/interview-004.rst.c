@@ -16,10 +16,9 @@
 void ptr_ops(void)
 {
 	int i;
-	int *ptr = (int *) malloc(5 * sizeof(int));
+	int *ptr = (int *)malloc(5 * sizeof(int));
 
-	for (i=0; i<5; i++)
-		*(ptr + i) = i;
+	for (i = 0; i < 5; i++) *(ptr + i) = i;
 
 	printf("%d ", *ptr++);
 	printf("%d ", (*ptr)++);
@@ -52,23 +51,23 @@ void ptr_ops(void)
 void str_search(void)
 {
 	char portlist[] = "Ethernet1,Ethernet2,Ethernet3,Ethernet4,Ethernet6,"
-		"Ethernet7,Ethernet8,Ethernet9,Ethernet10";
+	                  "Ethernet7,Ethernet8,Ethernet9,Ethernet10";
 	char newPort[] = "Ethernet01";
 
 	int nplen = 0;
 	char *pl = portlist;
 	int ps = 0;
 	char np[sizeof(newPort) + 2];
-	memset (np, 0, sizeof (np));
+	memset(np, 0, sizeof(np));
 	while (*pl) {
-		ps = strchr (pl, ',') - pl;
-		printf ("ps: %d\n", ps);
+		ps = strchr(pl, ',') - pl;
+		printf("ps: %d\n", ps);
 		if (ps < 1) {
-			printf ("np: %s not exists\n", np);
+			printf("np: %s not exists\n", np);
 			break;
 		}
 		strncpy(np, pl, ps);
-		printf ("np: %s, newPort: %s\n", np, newPort);
+		printf("np: %s, newPort: %s\n", np, newPort);
 		// FIXME check string is equal
 		pl += ps + 1;
 	}
@@ -86,7 +85,7 @@ void str_search(void)
  *
  * Input: -2 -3 4 -1 -2 1 5 -3
  * Output: 4-->5 = 7
- * 
+ *
  * My solution: Incomplete just explained of comparing previous maximum sum
  * with current maximum sum by moving two pointers (begin & end).
  */
@@ -97,10 +96,10 @@ int largestSubArraySum(void)
 {
 	int a[] = {-2, -3, 4, -1, -2, 1, 5, -3, 0, 0};
 	int sum = 0, pre_sum = 0;
-	int h=0, b=0, e=0;
+	int h = 0, b = 0, e = 0;
 	while (e < N) {
 		pre_sum += a[e++];
-		if (sum > pre_sum)
+		if (sum > pre_sum) /* change sum */
 	}
 	return 0;
 }

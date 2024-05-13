@@ -6,8 +6,10 @@ struct A {
 	int c;
 }
 
-static inline size_t get_offset_of(int mem) {
-	return (struct A*) - ((struct A*)->mem));
+static inline size_t
+get_offset_of(int mem)
+{
+	return ((struct A *)-((struct A *)->mem));
 }
 
 // custom malloc to return 128 byte aligned pointer to memory
@@ -19,14 +21,14 @@ typedef struct memblock {
 	size_t size;
 	bool is_free;
 	void *ptr;
-} MemBlocks
+} MemBlocks;
 
-void* my_malloc(size_t size) {
-	if (!size)
-		return NULL;
+void *my_malloc(size_t size)
+{
+	if (!size) return NULL;
 
-	MemBlocks 8blocks[1000];
-	MemBlocks 16blocks[1000];
+	MemBlocks 8blocks [1000];
+	MemBlocks 16blocks [1000];
 
 	for (int i = 0; i < 1000; i++) {
 		if (blocks[i].is_free) {
@@ -46,19 +48,23 @@ void* my_malloc(size_t size) {
 	return NULL;
 }
 
+/*
 z = 0x1122 3344 5566 7788
 x = 0x7788 5566 3344 1122
+*/
 
-void swap(uchar16_t *p1, uchar16_t *p2) {
+void swap(uchar16_t *p1, uchar16_t *p2)
+{
 	uchar16_t t = *p1;
 	*p1 = *p2;
 	*p2 = t;
 }
 
-size_t swap_2b (size_t z) {
+size_t swap_2b(size_t z)
+{
 	int end = sizeof(z);
 	int begin = 0;
-	while(begin < end) {
+	while (begin < end) {
 		swap(&z + begin, &z + end);
 		begin += 2;
 		end -= 2;
@@ -66,18 +72,20 @@ size_t swap_2b (size_t z) {
 	return z;
 }
 
-void swap(uchar8_t *p1, uchar8_t *p2) {
+void swap(uchar8_t *p1, uchar8_t *p2)
+{
 	uchar8_t t = *p1;
 	*p1 = *p2;
 	*p2 = t;
 }
 
-size_t swap_2b (size_t z) {
+size_t swap_2b(size_t z)
+{
 	char *begin = &z;
 	char *end = begin + sizeof(z);
-	while(begin < end) {
-		for (int i =0; i<2; i++)
-			swap(begin + i + 1, end - i - 1));
+	while (begin < end) {
+		for (int i = 0; i < 2; i++)
+			swap((begin + i + 1, end - i - 1);
 		begin += 2;
 		end -= 2;
 	}

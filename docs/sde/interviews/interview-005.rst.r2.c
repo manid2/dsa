@@ -19,7 +19,7 @@ typedef struct Node {
 	int data;
 } List;
 
-List* rev_list (List *head, int start, int end)
+List *rev_list(List *head, int start, int end)
 {
 	List *curr = head, *prev = NULL, *next = NULL;
 	int i = 0;
@@ -29,7 +29,7 @@ List* rev_list (List *head, int start, int end)
 		curr = curr->next;
 	}
 
-	List *h1 = NULL , t1 = curr;
+	List *h1 = NULL, t1 = curr;
 
 	while (curr && i++ < end) {
 		next = curr->next;
@@ -56,9 +56,9 @@ int inv_bits(int a, int start, int end)
 {
 	int b = a;
 	int mask = 0, i = start;
-	while (i++ < end) mask = 1 << i; 
+	while (i++ < end) mask = 1 << i;
 	int t = a & mask;
-	t ~= t;
+	t = ~t;
 	b |= t;
 	return b;
 }

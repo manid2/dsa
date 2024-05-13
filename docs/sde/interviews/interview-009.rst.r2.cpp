@@ -1,25 +1,26 @@
-// concentrix C++ round 2
-// singleton pattern
+// Concentrix C++ round 2
+// Singleton pattern
 class Test
 {
-public:
+	public:
 	static int num;
 	int &rnum;
 	int *pnum;
-	
-	static Test* getObject(void) {
+
+	static Test *getObject(void)
+	{
 		// use mutex to gaurd
 		if (!this_obj) {
 			this_obj = new Test; // check if already created
 		}
 		return this_obj;
 	}
-	
-private:
+
+	private:
 	Test *this_obj;
-	Test(): rnum(0), pnum(0) {}	
-	Test(const Test& t);
-	Test operator=(const Test& t);
+	Test() : rnum(0), pnum(0) {}
+	Test(const Test &t);
+	Test operator=(const Test &t);
 }
 
 int Test::num = 0;
@@ -39,22 +40,23 @@ int main(int ac, char **av)
 	return 0;
 }
 
-class TestDerived: public Test {
+class TestDerived : public Test
+{
 }
 
-class TestDer2
+class TestDer2;
 
 // cast operators
 int main(int ac, char **av)
 {
-	char b=10;
+	char b = 10;
 	int a = static_cast<int>(b);
 
 	Test *ptr = new TestDerived();
 	TestDerived *ptr2 = dynamic_cast<TestDerived>(ptr); // no error
-	TestDerived *ptr3 = dynamic_cast<TestDer2>(ptr); // error
+	TestDerived *ptr3 = dynamic_cast<TestDer2>(ptr);    // error
 
-	const char cb=10;
+	const char cb = 10;
 	char b1 = const_cast<char>(cb);
 
 	TestDerived *ptr3 = reinterpret_cast<TestDer2>(ptr); // no error
@@ -64,27 +66,23 @@ int main(int ac, char **av)
 // function override
 class TestBase
 {
-public:
-	int num;	
+	public:
+	int num;
 	virtual int add(int a) { return num + a; }
 	vritual ~TestBase()
 }
 
-class TestDerived: public TestBase
+class TestDerived : public TestBase
 {
-public:
+	public:
 	int add(int a) override { return num + a + 2; }
 }
 
 // object overload
 class TestBase
 {
-public:
+	public:
 	virtual int operator()(int a) { return num + a; }
 }
 
 // vptr
-
-
-
-

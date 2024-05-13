@@ -11,13 +11,14 @@ std::mutex mtx(cv);
 static int threads_id = 0;
 static int nthreads = 3;
 
-void thread_a(void *ch) {
-	mutex_lock (mtx);
+void thread_a(void *ch)
+{
+	mutex_lock(mtx);
 	while (cv.wait() && thread_id) {
 		print(*ch);
-		cv.notify_all ();
+		cv.notify_all();
 	}
-	mutex_unlock (mtx);
+	mutex_unlock(mtx);
 }
 
 for (int i = 0; i < 3;
@@ -31,16 +32,14 @@ bool parse_expr(const string &s)
 {
 	bool ret = true;
 	std::stack st;
-	for (auto c: s) {
+	for (auto c : s) {
 		if (c == '[' || c == '{' || c == '(')
 			st.push(c);
 		else if (c == ']' || c == '}' || c == ')')
-			 if (m[st.pop()] != c) {
+			if (m[st.pop()] != c) {
 				ret = false;
-			 	break
-			 }
+				break
+			}
 	}
 	return ret;
 }
-
----
