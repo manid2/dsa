@@ -41,7 +41,7 @@
  * [archit91's solution][lcdi1]
  * [bealdung.com Java solution][bd1]
  *
- * [lc53]: https://leetcode.com/problems/longest-substring-without-repeating-characters/
+ * [lc53]: https://leetcode.com/problems/maximum-subarray/
  * [lcdi1]: https://leetcode.com/problems/maximum-subarray/solutions/1595195/c-python-7-simple-solutions-w-explanation-brute-force-dp-kadane-divide-conquer
  * [bd1]: https://www.baeldung.com/java-maximum-subarray
  */
@@ -50,10 +50,9 @@
 
 using namespace std;
 
-/* Time complexity: O(n^2) square
- *
- * Where n is the number of elements in nums and there are n*(n+1)/2 subarrays
- * to check.
+/**
+ * TC: O(N^2) => For trying all possible N*(N+1)/2 sub arrays
+ * SC: O(1)
  */
 int _01_brute_force(vector<int> nums)
 {
@@ -74,25 +73,128 @@ int _01_brute_force(vector<int> nums)
 	return t == sum ? sum : INT_MIN;
 }
 
-/* Time complexity: O(n) linear */
-int _06_kadanes_algorithm(vector<int> nums)
+/**
+ * TC: O(N^2) => For trying all possible N*(N+1)/2 sub arrays
+ * SC: O(N)   => For recursion
+ */
+int _02_recursive_solve(vector<int> &A, int i, bool mustPick)
 {
-	int curr_sum = 0, sum = INT_MIN, b = 0, e = 0;
+	if (i >= size(A)) return mustPick ? 0 : INT_MIN;
+	if (mustPick)
+		// either stop here or choose current element and recurse
+		return max(0, A[i] + _02_recursive_solve(A, i + 1, true));
+	// try both choosing current element or not choosing
+	return max(_02_recursive_solve(A, i + 1, false),
+	           A[i] + _02_recursive_solve(A, i + 1, true));
+}
+
+int _02_recursive(vector<int> nums)
+{
+	return _02_recursive_solve(nums, 0, false);
+}
+
+/**
+ * TC: O(N) => For calculating 2N states and reusing memos
+ * SC: O(N) => For recursion
+ */
+int _03_dp_recusive_solve(vector<int> &A, int i, bool mustPick,
+                          vector<vector<int>> &dp)
+{
+	if (i >= size(A)) return mustPick ? 0 : INT_MIN;
+	if (dp[mustPick][i] != -1) return dp[mustPick][i];
+	if (mustPick)
+		// either stop here or choose current element and recurse
+		return dp[mustPick][i] =
+		           max(0, A[i] + _03_dp_recusive_solve(A, i + 1, true,
+		                                               dp));
+	// try both choosing current element or not choosing
+	return dp[mustPick][i] =
+	           max(_03_dp_recusive_solve(A, i + 1, false, dp),
+	               A[i] + _03_dp_recusive_solve(A, i + 1, true, dp));
+}
+
+int _03_dynamic_programming_memoization(vector<int> nums)
+{
+	vector<vector<int>> dp(2, vector<int>(size(nums), -1));
+	return _03_dp_recusive_solve(nums, 0, false, dp);
+}
+
+/**
+ * TC: O(N)
+ * SC: O(N) => For dp table
+ */
+int _04_dynamic_programming_tabulation(vector<int> nums)
+{
+	// dp[i] is the maximum subarray sum ending at i
+	vector<int> dp(nums);
+	for (int i = 1; i < size(nums); i++)
+		dp[i] = max(nums[i], nums[i] + dp[i - 1]);
+	// maximum of all max subarray sums ending at i.
+	return *max_element(begin(dp), end(dp));
+}
+
+/**
+ * TC: O(N)
+ * SC: O(1)
+ */
+int _05_kadanes_algorithm(vector<int> nums)
+{
+	int curr_sum = 0, sum = INT_MIN, b = 0, e = 0, _s = 0;
 	for (int i = 0; i < nums.size(); i++) {
 		curr_sum += nums[i];
-		if (nums[i] > curr_sum) {
-			curr_sum = nums[i];
-			if (sum < curr_sum) b = i;
-		}
-		if (sum < curr_sum) {
+		if (curr_sum > sum) {
 			sum = curr_sum;
+			b = _s;
 			e = i;
 		}
+
+		if (curr_sum < 0) {
+			curr_sum = 0;
+			_s = i + 1;
+		}
 	}
-	b = min(b, e);
 	int t = 0;
 	for (int i = b; i <= e; i++) t += nums[i];
 	return t == sum ? sum : INT_MIN;
+}
+
+/**
+ * TC: O(N log N)
+ * SC: O(log N)
+ *
+ * Recurrence relation for this method T(N) = 2T(N/2) + O(N) as:
+ *
+ * - Recurring for left and right half (2T(N/2)).
+ * - Calculating maximum subarray sum O(N).
+ *
+ * Solving this recurrence using master theorem to get TC O(N log N)
+ */
+int _06_dc_recusive_solve(vector<int> &A, int L, int R)
+{
+	if (L > R) return INT_MIN;
+	int mid = (L + R) / 2, leftSum = 0, rightSum = 0;
+
+	// leftSum = max subarray sum in [L, mid-1] and starting from mid-1
+	for (int i = mid - 1, curSum = 0; i >= L; i--) {
+		curSum += A[i];
+		leftSum = max(leftSum, curSum);
+	}
+
+	// rightSum = max subarray sum in [mid+1, R] and starting from mid+1
+	for (int i = mid + 1, curSum = 0; i <= R; i++) {
+		curSum += A[i];
+		rightSum = max(rightSum, curSum);
+	}
+
+	// return max of: left subarray, right subarray & mid subarry sums
+	return max({_06_dc_recusive_solve(A, L, mid - 1),
+	            _06_dc_recusive_solve(A, mid + 1, R),
+	            leftSum + A[mid] + rightSum});
+}
+
+int _06_divide_conquer(vector<int> nums)
+{
+	return _06_dc_recusive_solve(nums, 0, size(nums) - 1);
 }
 
 typedef std::function<int(std::vector<int>)> func_t;
@@ -120,13 +222,11 @@ int main(int argc, char *argv[])
 	vector<int> op{6, 1, 23};
 	vector<func_t> impls{
 	    _01_brute_force,
-	    /* TODO implement these variations
 	    _02_recursive,
 	    _03_dynamic_programming_memoization,
 	    _04_dynamic_programming_tabulation,
-	    _05_divide_conquer,
-	    */
-	    _06_kadanes_algorithm,
+	    _05_kadanes_algorithm,
+	    _06_divide_conquer,
 	};
 
 	for (auto &impl : impls) test_impl(ip, op, impl);
