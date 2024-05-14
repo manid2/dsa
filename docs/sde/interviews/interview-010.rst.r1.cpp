@@ -28,7 +28,7 @@ int main(int ac, char **av)
 
 class Test
 {
-	public:
+public:
 	Test() : d(0) {}
 
 	Test(const Test &t)
@@ -46,7 +46,7 @@ class Test
 		return *this;
 	}
 
-	private:
+private:
 	string str;
 	int data;
 }

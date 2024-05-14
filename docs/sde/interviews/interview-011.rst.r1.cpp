@@ -47,7 +47,7 @@ enum VehicleType {
 
 class VehicleFactory
 {
-	public:
+public:
 	Vehicle *createVehicle(enum vt)
 	{
 		switch (vt) {

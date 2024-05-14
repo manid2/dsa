@@ -2,7 +2,7 @@
 // Singleton pattern
 class Test
 {
-	public:
+public:
 	static int num;
 	int &rnum;
 	int *pnum;
@@ -16,7 +16,7 @@ class Test
 		return this_obj;
 	}
 
-	private:
+private:
 	Test *this_obj;
 	Test() : rnum(0), pnum(0) {}
 	Test(const Test &t);
@@ -66,7 +66,7 @@ int main(int ac, char **av)
 // function override
 class TestBase
 {
-	public:
+public:
 	int num;
 	virtual int add(int a) { return num + a; }
 	vritual ~TestBase()
@@ -74,14 +74,14 @@ class TestBase
 
 class TestDerived : public TestBase
 {
-	public:
+public:
 	int add(int a) override { return num + a + 2; }
 }
 
 // object overload
 class TestBase
 {
-	public:
+public:
 	virtual int operator()(int a) { return num + a; }
 }
 

@@ -4,38 +4,38 @@
 // exposed to client code
 class BaseState
 {
-	private:
+private:
 	BaseState *state;
 	BaseState *next;
 
-	public:
+public:
 	BaseState *nextState() { return state->next; }
 }
 
 class StartState : public BaseState
 {
-	private:
+private:
 	BaseState *next;
 
-	public:
+public:
 	setNext() { next = new RunState; }
 }
 
 class RunState : public BaseState
 {
-	private:
+private:
 	BaseState *next;
 
-	public:
+public:
 	setNext() { next = new StopState; }
 }
 
 class StopState : public BaseState
 {
-	private:
+private:
 	BaseState *next;
 
-	public:
+public:
 	setNext() { next = NULL; }
 }
 
@@ -57,25 +57,25 @@ enum VehicleType {
 
 class Vehicle
 {
-	public:
+public:
 	virtual void run(void) = 0;
 }
 
 class Car : public Vehicle
 {
-	public:
+public:
 	void run(void) { cout << "car run" << endl; }
 }
 
 class Bike : public Vehicle
 {
-	public:
+public:
 	void run(void) { cout << "car run" << endl; }
 }
 
 class VehicleFactory
 {
-	public:
+public:
 	Vehicle *createVehicle(VehicleType vt)
 	{
 		switch (vt) {
@@ -97,14 +97,14 @@ int main()
 
 class Base
 {
-	public:
+public:
 	virtual void foo();
 	virtual void bar(int);
 };
 
 class Derived : public Base
 {
-	public:
+public:
 	void foo() @override; // no error
 	void bar() @override; // error int is not provided
 };
@@ -117,7 +117,7 @@ NonCopyable &operator=(const NonCopyable &) = delete;
 
 class AssignOp
 {
-	public:
+public:
 	AssignOp operator=(const AssignOp &other)
 	{
 		*this = other;

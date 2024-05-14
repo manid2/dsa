@@ -4,11 +4,11 @@
 
 template <typename T> class Example
 {
-	private:
+private:
 	T *data;
 	int len;
 
-	public:
+public:
 	Example() : *data(NULL), len(0) {}
 	Example(T d, int l) : *data(NULL), len(l)
 	{
@@ -34,11 +34,11 @@ int main()
 
 class String
 {
-	private:
+private:
 	char *data;
 	int len;
 
-	public:
+public:
 	String() : *data(NULL), len(0) {}
 	String(const String &other)
 	{
@@ -75,7 +75,7 @@ func(String a);
 // user defined class
 class MapId
 {
-	private:
+private:
 	int id;
 
 	operator>();

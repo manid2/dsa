@@ -2,13 +2,13 @@
 
 class AbstractBase
 {
-	public:
+public:
 	virtual void display() = 0; //
 };
 
 class Derived : public AbstractBase
 {
-	public:
+public:
 	void display() override;
 };
 
@@ -21,7 +21,7 @@ int main(int ac, char **av)
 // Singleton pattern
 class Singleton
 {
-	public:
+public:
 	static Singleton &getInstance(void)
 	{
 		static Singleton obj;
@@ -34,7 +34,7 @@ class EventNotificationsObserver
 {
 	std::vector<EventBase> objs;
 
-	public:
+public:
 	void register_event(EventBase &obj) { objs.push_back(obj); }
 
 	void notify_events()

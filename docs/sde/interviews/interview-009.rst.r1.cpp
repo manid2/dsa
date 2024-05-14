@@ -35,10 +35,10 @@ High->program args->stack->free meory |
 
 class Node
 { // encapsulation
-	private:
+private:
 	int data;
 
-	public:
+public:
 	void set_data(int a);
 	int get_data(void);
 }
@@ -46,10 +46,10 @@ class Node
 template <typename T>
 class Node
 { // compile time polymorphism (template, function overloading) + runtime polymorphism (virtual functions)
-	private:
+private:
 	T data;
 
-	public:
+public:
 	void set_data(T a);
 	T get_data(void);
 }
@@ -61,10 +61,10 @@ delete[] n;
 // copy constructor
 class Node
 {
-	private:
+private:
 	int data;
 
-	public:
+public:
 	Node() : {};
 	Node(const Node &node) : data(node.data){}; // Node n1; Node n2(n1);
 
@@ -94,7 +94,7 @@ class NodeState
 	prviate : NodeState_e state;
 	NodeState curr;
 
-	public:
+public:
 	void set_state();
 	NodeState *get_state()
 	{
