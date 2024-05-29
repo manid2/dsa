@@ -3,6 +3,7 @@ all: tests check docs
 DSAVENV_ACTIVATE_FILE:=.dsavenv/bin/activate
 DSAVENV_ACTIVATE_CMD:=. $(DSAVENV_ACTIVATE_FILE);
 DSA_PYTHON_MODULES:=$(sort $(dir $(shell git ls-files -- '*/__init__.py')))
+CPP_SRC_FILES:=$(shell git ls-files -- '**/*.cpp' '**/*.c')
 
 PYLINT_CMD:=pylint --rcfile=.pylintrc.toml
 
@@ -34,7 +35,7 @@ lint: flake8 pylint
 	$(info Linting OK.)
 
 cpp-format:
-	clang-format -i cpp/*.c cpp/*.cpp
+	clang-format -i $(CPP_SRC_FILES)
 
 py-format: .dsavenv
 	$(DSAVENV_ACTIVATE_CMD) autopep8 -iar $(DSA_PYTHON_MODULES)
