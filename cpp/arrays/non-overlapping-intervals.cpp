@@ -45,7 +45,7 @@
 using namespace std;
 
 /**
- * TC: O(N)
+ * TC: O(N log N)
  * SC: O(1)
  */
 int eraseOverlapIntervals(vector<vector<int>> &intervals)
