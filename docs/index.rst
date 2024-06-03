@@ -23,6 +23,7 @@ Table of Contents
    greedy_method/index
    dynamic_programming/index
    sde/index
+   sde/dsa_study_plan
    sde/interviews/index
 
 Indices
