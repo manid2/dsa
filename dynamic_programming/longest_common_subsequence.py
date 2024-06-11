@@ -13,8 +13,8 @@ class LongestCommonSubsequence:
 
     Refer:
 
-    * `Traveling Salesman Problem (DP) | Abdul Bari <abyt1>`_
-    * `Traveling Salesman Problem (DP) | programiz.com <pgz1>`_
+    * `Longest Common Subsequence (DP) | Abdul Bari <abyt1>`_
+    * `Longest Common Subsequence (DP) | programiz.com <pgz1>`_
 
     .. _abyt1: https://youtu.be/sSno9rV8Rhg?si=s36ywvtq5UDV141P
     .. _pgz1: https://www.programiz.com/dsa/longest-common-subsequence
