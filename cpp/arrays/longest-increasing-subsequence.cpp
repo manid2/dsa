@@ -11,7 +11,26 @@
 using namespace std;
 
 class _01_recursive;
-class _02_dp_tab;
+
+class _02_dp_tab
+{
+public:
+	int lengthOfLIS(vector<int> &nums)
+	{
+		int n = nums.size(), ans = 0;
+		vector<int> dp(n, 1);
+		for (int i = 0; i < n; ++i)
+			for (int j = 0; j < i; ++j)
+				if (nums[i] > nums[j]) {
+					dp[i] = max(dp[i], dp[j] + 1);
+					// FIXME: ans = max(ans, dp[i]);
+				}
+		//return ans;
+		return *max_element(dp.begin(), dp.end());
+	}
+
+	int operator()(vector<int> &nums) { return this->lengthOfLIS(nums); }
+};
 
 /* TC : O(n log n)
  * SC : O(n)
@@ -72,14 +91,17 @@ public:
 		return path;
 	}
 
-	vector<int> operator()(vector<int> &nums) { return this->pathOfLIS(nums); }
+	vector<int> operator()(vector<int> &nums)
+	{
+		return this->pathOfLIS(nums);
+	}
 };
 
 class _04_binary_indexed_tree;
 class _05_binary_indexed_tree_compress;
 class _06_segment_tree;
 
-typedef std::function<int(vector<int>&)> func_t;
+typedef std::function<int(vector<int> &)> func_t;
 
 void test_impl(vector<vector<int>> ip, vector<int> op, func_t impl)
 {
@@ -104,6 +126,7 @@ int main(int argc, char *argv[])
 	vector<int> op{4, 4, 1};
 
 	vector<func_t> impls{
+	    _02_dp_tab(),
 	    _03_greedy_with_binary_search(),
 	};
 
