@@ -12,21 +12,23 @@ using namespace std;
 
 class _01_recursive;
 
+/* TC : O(n^2)
+ * SC : O(n)
+ */
 class _02_dp_tab
 {
 public:
 	int lengthOfLIS(vector<int> &nums)
 	{
-		int n = nums.size(), ans = 0;
+		int n = nums.size(), ans = 1;
 		vector<int> dp(n, 1);
 		for (int i = 0; i < n; ++i)
 			for (int j = 0; j < i; ++j)
 				if (nums[i] > nums[j]) {
 					dp[i] = max(dp[i], dp[j] + 1);
-					// FIXME: ans = max(ans, dp[i]);
+					ans = max(ans, dp[i]);
 				}
-		//return ans;
-		return *max_element(dp.begin(), dp.end());
+		return ans;
 	}
 
 	int operator()(vector<int> &nums) { return this->lengthOfLIS(nums); }
