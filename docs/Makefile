@@ -1,4 +1,4 @@
-DSAVENV_ACTIVATE_FILE:=../.dsavenv/bin/activate
+DSAVENV_ACTIVATE_FILE:=../.venv/bin/activate
 DSAVENV_ACTIVATE_CMD:=. $(DSAVENV_ACTIVATE_FILE);
 
 SPHINXBUILD   = sphinx-build

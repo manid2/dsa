@@ -1,7 +1,7 @@
 __pycache__
 
 # ignore virtual environment directory
-.dsavenv
+.venv
 
 # ignore tags
 cscope.files
