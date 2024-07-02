@@ -21,7 +21,7 @@ using namespace std;
 class _00_base
 {
 public:
-	bool check(const vector<int>& prev, const vector<int>& curr)
+	bool check(const vector<int> &prev, const vector<int> &curr)
 	{
 		return (prev[0] < curr[0] && prev[1] < curr[1]);
 	}
@@ -224,10 +224,8 @@ int main(int argc, char *argv[])
 	vector<int> op{60};
 
 	vector<func_t> impls{
-	    _01_recursive(),
-	    _02_dp_memo(),
-	    _03_dp_tab(),
-	    _04_dp_tab_space_optimized(),
+	    _01_recursive(),     _02_dp_memo(),
+	    _03_dp_tab(),        _04_dp_tab_space_optimized(),
 	    _05_dp_tab_simple(),
 	};
 

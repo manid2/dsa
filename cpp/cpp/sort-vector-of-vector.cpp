@@ -9,8 +9,7 @@ void print_cuboids(const vector<vector<int>> &cuboids)
 		if (i) cout << ", ";
 		cout << "{";
 		for (int j = 0; j < cuboids[i].size(); j++) {
-			if (j)
-				cout << ", ";
+			if (j) cout << ", ";
 			cout << cuboids[i][j];
 		}
 		cout << "}";
