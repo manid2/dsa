@@ -2,4 +2,4 @@
 Binary trees
 ============
 
-.. literalinclude:: ../../binary_trees/binary_tree.py
+.. literalinclude:: ../../python3/binary_trees/binary_tree.py

@@ -9,4 +9,4 @@ This is different from the greedy method which is also used to solve
 optimization problems as it tries to solve by exploring all possible solutions
 instead of using a pre-defined method as used in greedy method.
 
-.. literalinclude:: ../../dynamic_programming/longest_common_subsequence.py
+.. literalinclude:: ../../python3/dynamic_programming/longest_common_subsequence.py

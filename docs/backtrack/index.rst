@@ -13,22 +13,22 @@ Solutions are found by constructing a tree structure called State Space Tree
 Abstract backtrack algorithm class
 ==================================
 
-.. literalinclude:: ../../backtrack/backtrack.py
+.. literalinclude:: ../../python3/backtrack/backtrack.py
 
 Arrange seats for 2 Boys and 1 Girl
 ===================================
 
-.. autoclass:: backtrack.ArrangeSeats
+.. autoclass:: python3.backtrack.ArrangeSeats
    :members:
    :show-inheritance:
 
-.. literalinclude:: ../../backtrack/arrange_seats.py
+.. literalinclude:: ../../python3/backtrack/arrange_seats.py
 
 Place N Queens in (N x N) chess board
 =====================================
 
-.. autoclass:: backtrack.NQueens
+.. autoclass:: python3.backtrack.NQueens
    :members:
    :show-inheritance:
 
-.. literalinclude:: ../../backtrack/n_queens.py
+.. literalinclude:: ../../python3/backtrack/n_queens.py
