@@ -3,36 +3,26 @@
 # ============================================================================
 all: tests check
 
-all: html
-
 # ============================================================================
 # Variables & source file targets
 # ============================================================================
-include ../mk/venv.mk
+include ../mk/common.mk
 
-SPHINXBUILD   = sphinx-build
-SPHINXOPTS    =
-SOURCEDIR     = .
-BUILDDIR      = output
+SRCS:=$(shell $(GIT_LS) -- '**/*.c')
+OBJS:=$(SRCS:.c=.o)
+BINS:=$(OBJS:.o=)
 
-html: venv
-	@$(VENV_ACTIVATE) $(SPHINXBUILD) -M $@ \
-		"$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS)
-
-venv: $(VENV_DONE)
-
-$(VENV_DONE):
-	make -C ../ venv
+$(BINS): %: %.o
+	$(CC) $(CFLAGS) -o $@ $< 
 
 # ============================================================================
 # Top level targets
 # ============================================================================
-tests: html
+tests:
 
 check:
 
 clean:
-	rm -rf "$(BUILDDIR)"
 
 format:
 

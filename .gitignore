@@ -4,10 +4,7 @@ __pycache__
 .venv
 
 # ignore tags
-cscope.files
-cscope.out
-cscope.out.in
-cscope.out.po
+cscope.*
 tags
 
 # ignore vim swap file
@@ -18,3 +15,4 @@ docs/output
 
 # ignore c/cpp compiled output
 a.out
+build/

@@ -1,54 +1,86 @@
-all: tests check docs
+# ============================================================================
+# Default targets
+# ============================================================================
+all: tests check
 
-DSAVENV_ACTIVATE_FILE:=.venv/bin/activate
-DSAVENV_ACTIVATE_CMD:=. $(DSAVENV_ACTIVATE_FILE);
-DSA_PYTHON_MODULES:=$(sort $(dir $(shell git ls-files -- '*/__init__.py')))
-CPP_SRC_FILES:=$(shell git ls-files -- '**/*.cpp' '**/*.c')
+# ============================================================================
+# Targets for sub directories
+# ============================================================================
+SUB_DIRS:=c cpp python3 docs
 
-PYLINT_CMD:=pylint --rcfile=.pylintrc.toml
+TESTS_SUB_DIRS:=$(foreach subdir,$(SUB_DIRS),tests-$(subdir))
+CHECK_SUB_DIRS:=$(foreach subdir,$(SUB_DIRS),check-$(subdir))
+CLEAN_SUB_DIRS:=$(foreach subdir,$(SUB_DIRS),clean-$(subdir))
 
-.PHONY: .venv tests check clean lint format tags docs clean-docs
+FORMAT_SUB_DIRS:=$(foreach subdir,$(SUB_DIRS),format-$(subdir))
+LINT_SUB_DIRS:=$(foreach subdir,$(SUB_DIRS),lint-$(subdir))
 
-.venv: .venv/done
+$(SUB_DIRS): venv
+	make -C $@
 
-.venv/done: requirements.txt
-	test -d .venv || python3 -m venv .venv
-	$(DSAVENV_ACTIVATE_CMD) pip install -Ur requirements.txt
-	touch .venv/done
+$(TESTS_SUB_DIRS): venv
+	make -C $(@:tests-%=%) tests
 
-tests: lint
-	touch .venv/testsdone
+$(CHECK_SUB_DIRS): $(TESTS_SUB_DIRS)
+	make -C $(@:check-%=%) check
 
-check: .venv/testsdone
-	$(DSAVENV_ACTIVATE_CMD) pytest
+$(CLEAN_SUB_DIRS):
+	make -C $(@:clean-%=%) clean
 
-clean:
-	rm -rf .venv
+$(FORMAT_SUB_DIRS):
+	make -C $(@:format-%=%) format
 
-flake8: .venv
-	$(DSAVENV_ACTIVATE_CMD) flake8 $(DSA_PYTHON_MODULES)
+$(LINT_SUB_DIRS):
+	make -C $(@:lint-%=%) lint
 
-pylint: .venv
-	$(DSAVENV_ACTIVATE_CMD) $(PYLINT_CMD) $(DSA_PYTHON_MODULES)
+# ============================================================================
+# Setup venv for python and docs
+# ============================================================================
+include mk/venv.mk
 
-lint: flake8 pylint
-	$(info Linting OK.)
+venv: $(VENV_DONE)
 
-cpp-format:
-	@echo "Formatting cpp source files..."
-	@clang-format -i $(CPP_SRC_FILES)
+$(VENV_DONE): requirements.txt
+	test -d $(VENV_DIR) || python3 -m venv $(VENV_DIR)
+	$(VENV_ACTIVATE) pip install -Ur requirements.txt
+	touch $(VENV_DONE)
 
-py-format: .venv
-	@echo "Formatting python source files..."
-	@$(DSAVENV_ACTIVATE_CMD) autopep8 -iar $(DSA_PYTHON_MODULES)
+# ============================================================================
+# Targets for C++ binaries
+# ============================================================================
+CPP_SRCS:=$(shell $(GIT_LS) -- 'cpp/**/*.cpp')
+CPP_BINS:=$(CPP_SRCS:.cpp=)
 
-format: cpp-format py-format
+CPP_BINS_CHECK:=$(addsuffix -check,$(CPP_BINS))
+CPP_BINS_CLEAN:=$(addsuffix -clean,$(CPP_BINS))
+CPP_SRCS_FORMAT:=$(addsuffix -format,$(CPP_BINS))
+CPP_SRCS_LINT:=$(addsuffix -lint,$(CPP_BINS))
+
+CPP_ALL:=$(CPP_BINS) $(CPP_BINS_CLEAN) $(CPP_SRCS_FORMAT) $(CPP_SRCS_LINT)
+
+$(CPP_BINS_CHECK):
+	@make --no-print-directory -C cpp $(@:cpp/%=%)
+
+$(CPP_ALL):
+	make -C cpp $(@:cpp/%=%)
+
+# ============================================================================
+# Top level targets
+# ============================================================================
+tests: $(TESTS_SUB_DIRS)
+
+check: $(CHECK_SUB_DIRS)
+
+clean: $(CLEAN_SUB_DIRS)
+	rm -rf $(VENV_DIR)
+
+format: $(FORMAT_SUB_DIRS)
+
+lint: $(LINT_SUB_DIRS)
 
 tags:
 	./mktags
 
-docs:
-	make -C docs
-
-clean-docs:
-	make -C docs clean
+.PHONY: venv tests check clean format lint tags $(SUB_DIRS) $(CLEAN_SUB_DIRS)\
+	$(TESTS_SUB_DIRS) $(FORMAT_SUB_DIRS) $(LINT_SUB_DIRS) $(CPP_ALL) \
+	$(CPP_BINS_CHECK)
