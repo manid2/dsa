@@ -1,16 +1,3 @@
-/* Reverse linked list iterative */
-ListNode *reverse(ListNode *head)
-{
-	ListNode *curr = head, *prev = nullptr, *next = nullptr;
-	while (curr) {
-		next = curr->next;
-		curr->next = prev;
-		prev = curr;
-		curr = next;
-	}
-	return curr;
-}
-
 /**
  * Reverse a linked list in k groups
  * =================================
@@ -33,6 +20,28 @@ ListNode *reverse(ListNode *head)
  *
  * Reverse a linked list in k groups iterative.
  */
+
+struct ListNode {
+	int val;
+	ListNode *next;
+	ListNode() : val(0), next(nullptr) {}
+	ListNode(int x) : val(x), next(nullptr) {}
+	ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
+/* Reverse linked list iterative */
+ListNode *reverse(ListNode *head)
+{
+	ListNode *curr = head, *prev = nullptr, *next = nullptr;
+	while (curr) {
+		next = curr->next;
+		curr->next = prev;
+		prev = curr;
+		curr = next;
+	}
+	return curr;
+}
+
 ListNode *reverseKGroup(ListNode *head, int k)
 {
 	if (!head || !head->next || k < 2) return head;
@@ -60,4 +69,9 @@ ListNode *reverseKGroup(ListNode *head, int k)
 		prev_head = next_head;
 	}
 	return dummy.next;
+}
+
+int main(int argc, char *argv[])
+{
+	return 0;
 }

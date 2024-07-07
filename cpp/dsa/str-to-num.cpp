@@ -4,11 +4,10 @@
  * before the even ones and output the data
  */
 
-#include <algorithm>
-#include <iostream>
-#include <stdexcept>
-#include <string>
-#include <vector>
+
+#include <bits/stdc++.h>
+
+using namespace std;
 
 auto input = std::vector<std::string>{
     "9", "0", "49", "2", "100", "not a number", "12 not a number too"};
