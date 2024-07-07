@@ -24,10 +24,6 @@ jobs:
           submodules: false
           fetch-depth: 50
 
-      - name: Build tests
+      - name: Build & run tests
         run: |
-          make tests
-
-      - name: Run tests
-        run: |
-          make check
+          make
