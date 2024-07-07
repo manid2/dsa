@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 
+
 import os
+import re
 import subprocess
+
+
 from dataclasses import dataclass
 
 
@@ -10,6 +14,20 @@ class CppTestsSummary():
     sources: int = 0
     implementations: int = 0
     tests: int = 0
+
+    def parse_ts(self, result):
+        pat1 = r'Executed (\d+) implementations'
+        pat2 = r'with (\d+) tests'
+
+        mat1 = re.search(pat1, result)
+        mat2 = re.search(pat2, result)
+
+        n1 = int(mat1.group(1)) if mat1 else 0
+        n2 = int(mat2.group(1)) if mat2 else 0
+
+        self.sources += 1
+        self.implementations += n1
+        self.tests += n2
 
 
 def main():
@@ -47,9 +65,7 @@ def main():
         result = result.decode("utf-8").rstrip()
         result = result.partition('\n')[0] if len(result) else ""
         print(cmd + " --> " + result)
-        cpp_ts.sources += 1
-        cpp_ts.implementations += 1
-        cpp_ts.tests += 1
+        cpp_ts.parse_ts(result)
 
     print("")
     print("# " + ''.join(["="]*76))
@@ -57,7 +73,7 @@ def main():
     print("# " + ''.join(["="]*76))
     print("")
     print(f"Successfully tested {cpp_ts.sources} sources with " +
-          f"{cpp_ts.implementations} implementations {cpp_ts.tests} tests")
+          f"{cpp_ts.implementations} implementations {cpp_ts.tests} tests.")
     print("")
     print("# " + ''.join(["="]*76))
     print("")
