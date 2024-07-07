@@ -46,6 +46,7 @@ $(SRCS_LINT):
 tests: $(BINS)
 
 check:
+	@cd .. && scripts/run_tests.py
 
 clean:
 	rm -rf $(BINS)
