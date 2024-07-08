@@ -66,8 +66,10 @@ public:
 string _vec2str(vector<int> &vec)
 {
 	ostringstream oss;
+	oss << "{";
 	copy(vec.begin(), vec.end() - 1, ostream_iterator<int>(oss, ", "));
 	oss << vec.back();
+	oss << "}";
 	return oss.str();
 }
 
@@ -85,8 +87,9 @@ void test_impl(vector<pair<vector<int>, int>> &ip, vector<int> &op,
 
 		if (getenv("SHOW_TEST_OUTPUT"))
 			cout << "  test-" << i << ":  "
-			     << "nums = {" << _vec2str(ip[i].first) << "} "
-			     << "target = " << ip[i].second << "\n";
+			     << "input: nums = " << _vec2str(ip[i].first)
+			     << ", target = " << ip[i].second
+			     << "  output: index = " << t << "\n";
 	}
 }
 

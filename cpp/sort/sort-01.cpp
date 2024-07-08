@@ -111,8 +111,10 @@ public:
 string _vec2str(vector<int> &vec)
 {
 	ostringstream oss;
+	oss << "{";
 	copy(vec.begin(), vec.end() - 1, ostream_iterator<int>(oss, ", "));
 	oss << vec.back();
+	oss << "}";
 	return oss.str();
 }
 
@@ -120,17 +122,19 @@ void test_impl(vector<vector<int>> &ip, vector<vector<int>> &op,
                shared_ptr<_00_test> f)
 {
 	for (size_t i = 0; i < ip.size(); i++) {
-		f->sort(ip[i]);
-		if (op[i] != ip[i]) {
+		vector<int> t = ip[i];
+		f->sort(t);
+		if (t != op[i]) {
 			cerr << f->getName() << " test failed: "
 			     << "expected " << _vec2str(op[i]) << ", actual "
-			     << _vec2str(ip[i]) << "." << endl;
+			     << _vec2str(t) << "." << endl;
 			exit(1);
 		}
 
 		if (getenv("SHOW_TEST_OUTPUT"))
-			cout << "  test-" << i << ":  " << _vec2str(ip[i])
-			     << "\n";
+			cout << "  test-" << i << ":  "
+			     << "input: nums = " << _vec2str(ip[i])
+			     << "  output: nums = " << _vec2str(t) << "\n";
 	}
 }
 

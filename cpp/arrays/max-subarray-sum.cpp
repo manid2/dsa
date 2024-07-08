@@ -50,165 +50,242 @@
 
 using namespace std;
 
-/**
- * TC: O(N^2) => For trying all possible N*(N+1)/2 sub arrays
- * SC: O(1)
+/* ===========================================================================
+ * Test helpers
+ * ===========================================================================
  */
-int _01_brute_force(vector<int> nums)
+class _00_test
 {
-	int n = nums.size(), sum = INT_MIN, b = 0, e = 0;
-	for (int i = 0; i < n; i++) {
-		int curr_sum = 0;
-		for (int j = i; j < n; j++) {
-			curr_sum += nums[j];
-			if (curr_sum > sum) {
-				sum = curr_sum;
-				b = i;
-				e = j;
+public:
+	_00_test(const string &name) : name(name) {}
+
+	string getName(void) const { return name; }
+
+	virtual int maxSubArray(const vector<int> &nums) = 0;
+
+private:
+	string name;
+};
+
+/* ===========================================================================
+ * Algorithms implementation
+ * ===========================================================================
+ */
+
+/**
+ * TC : O(n^2) => For trying all possible n*(n+1)/2 sub arrays
+ * SC : O(1)
+ */
+class _01_brute_force : public _00_test
+{
+public:
+	_01_brute_force() : _00_test("Maximum subarray sum brute force") {}
+
+	int maxSubArray(const vector<int> &nums) override
+	{
+		int n = nums.size(), sum = INT_MIN, b = 0, e = 0;
+		for (int i = 0; i < n; i++) {
+			int curr_sum = 0;
+			for (int j = i; j < n; j++) {
+				curr_sum += nums[j];
+				if (curr_sum > sum) {
+					sum = curr_sum;
+					b = i;
+					e = j;
+				}
 			}
 		}
+		int t = 0;
+		for (int i = b; i <= e; i++) t += nums[i];
+		return t == sum ? sum : INT_MIN;
 	}
-	int t = 0;
-	for (int i = b; i <= e; i++) t += nums[i];
-	return t == sum ? sum : INT_MIN;
-}
+};
 
 /**
- * TC: O(N^2) => For trying all possible N*(N+1)/2 sub arrays
- * SC: O(N)   => For recursion
+ * TC : O(n^2) => For trying all possible n*(n+1)/2 sub arrays
+ * SC : O(n)   => For recursion
  */
-int _02_recursive_solve(vector<int> &A, int i, bool mustPick)
+class _02_recursive : public _00_test
 {
-	if (i >= static_cast<int>(A.size())) return mustPick ? 0 : INT_MIN;
-	if (mustPick)
-		// either stop here or choose current element and recurse
-		return max(0, A[i] + _02_recursive_solve(A, i + 1, true));
-	// try both choosing current element or not choosing
-	return max(_02_recursive_solve(A, i + 1, false),
-	           A[i] + _02_recursive_solve(A, i + 1, true));
-}
+public:
+	_02_recursive() : _00_test("Maximum subarray sum recursive") {}
 
-int _02_recursive(vector<int> nums)
-{
-	return _02_recursive_solve(nums, 0, false);
-}
+	int maxSubArray(const vector<int> &nums) override
+	{
+		return solve(nums, 0, false);
+	}
+
+	int solve(const vector<int> &A, int i, bool mustPick)
+	{
+		if (i >= static_cast<int>(A.size()))
+			return mustPick ? 0 : INT_MIN;
+		if (mustPick) return max(0, A[i] + solve(A, i + 1, true));
+		return max(solve(A, i + 1, false),
+		           A[i] + solve(A, i + 1, true));
+	}
+};
 
 /**
- * TC: O(N) => For calculating 2N states and reusing memos
- * SC: O(N) => For recursion
+ * TC : O(n) => For calculating 2n states and reusing memos
+ * SC : O(n) => For recursion
  */
-int _03_dp_recusive_solve(vector<int> &A, int i, bool mustPick,
-                          vector<vector<int>> &dp)
+class _03_dp_memo : public _00_test
 {
-	if (i >= static_cast<int>(A.size())) return mustPick ? 0 : INT_MIN;
-	if (dp[mustPick][i] != -1) return dp[mustPick][i];
-	if (mustPick)
-		// either stop here or choose current element and recurse
+public:
+	_03_dp_memo()
+	    : _00_test("Maximum subarray sum dynamic programming memoization")
+	{
+	}
+
+	int maxSubArray(const vector<int> &nums) override
+	{
+		vector<vector<int>> dp(2, vector<int>(size(nums), -1));
+		return solve(nums, 0, false, dp);
+	}
+
+	int solve(const vector<int> &A, int i, bool mustPick,
+	          vector<vector<int>> &dp)
+	{
+		if (i >= static_cast<int>(A.size()))
+			return mustPick ? 0 : INT_MIN;
+		if (dp[mustPick][i] != -1) return dp[mustPick][i];
+		if (mustPick)
+			return dp[mustPick][i] =
+			           max(0, A[i] + solve(A, i + 1, true, dp));
 		return dp[mustPick][i] =
-		           max(0, A[i] + _03_dp_recusive_solve(A, i + 1, true,
-		                                               dp));
-	// try both choosing current element or not choosing
-	return dp[mustPick][i] =
-	           max(_03_dp_recusive_solve(A, i + 1, false, dp),
-	               A[i] + _03_dp_recusive_solve(A, i + 1, true, dp));
-}
-
-int _03_dynamic_programming_memoization(vector<int> nums)
-{
-	vector<vector<int>> dp(2, vector<int>(size(nums), -1));
-	return _03_dp_recusive_solve(nums, 0, false, dp);
-}
+		           max(solve(A, i + 1, false, dp),
+		               A[i] + solve(A, i + 1, true, dp));
+	}
+};
 
 /**
- * TC: O(N)
- * SC: O(N) => For dp table
+ * TC : O(n)
+ * SC : O(n) => For dp table
  */
-int _04_dynamic_programming_tabulation(vector<int> nums)
+class _04_dp_tab : public _00_test
 {
-	// dp[i] is the maximum subarray sum ending at i
-	vector<int> dp(nums);
-	for (int i = 1; i < static_cast<int>(nums.size()); i++)
-		dp[i] = max(nums[i], nums[i] + dp[i - 1]);
-	// maximum of all max subarray sums ending at i.
-	return *max_element(begin(dp), end(dp));
-}
+public:
+	_04_dp_tab()
+	    : _00_test("Maximum subarray sum dynamic programming tabulation")
+	{
+	}
+
+	int maxSubArray(const vector<int> &nums) override
+	{
+		// dp[i] is the maximum subarray sum ending at i
+		vector<int> dp(nums);
+		for (int i = 1; i < static_cast<int>(nums.size()); i++)
+			dp[i] = max(nums[i], nums[i] + dp[i - 1]);
+		// maximum of all max subarray sums ending at i.
+		return *max_element(begin(dp), end(dp));
+	}
+};
 
 /**
- * TC: O(N)
- * SC: O(1)
+ * TC : O(n)
+ * SC : O(1)
  */
-int _05_kadanes_algorithm(vector<int> nums)
+class _05_kadanes : public _00_test
 {
-	int curr_sum = 0, sum = INT_MIN, b = 0, e = 0, _s = 0;
-	for (int i = 0; i < static_cast<int>(nums.size()); i++) {
-		curr_sum += nums[i];
-		if (curr_sum > sum) {
-			sum = curr_sum;
-			b = _s;
-			e = i;
+public:
+	_05_kadanes() : _00_test("Maximum subarray sum Kadane's algorithm") {}
+
+	int maxSubArray(const vector<int> &nums) override
+	{
+		int curr_sum = 0, sum = INT_MIN, b = 0, e = 0, _s = 0;
+		for (int i = 0; i < static_cast<int>(nums.size()); i++) {
+			curr_sum += nums[i];
+			if (curr_sum > sum) {
+				sum = curr_sum;
+				b = _s;
+				e = i;
+			}
+
+			if (curr_sum < 0) {
+				curr_sum = 0;
+				_s = i + 1;
+			}
+		}
+		int t = 0;
+		for (int i = b; i <= e; i++) t += nums[i];
+		return t == sum ? sum : INT_MIN;
+	}
+};
+
+/**
+ * TC : O(n log n)
+ * SC : O(log n)
+ *
+ * Recurrence relation for this method T(n) = 2T(n/2) + O(n) as:
+ *
+ * - Recurring for left and right half (2T(n/2)).
+ * - Calculating maximum subarray sum O(n).
+ *
+ * Solving this recurrence using master theorem to get TC O(n log n)
+ */
+class _06_divide_conquer : public _00_test
+{
+public:
+	_06_divide_conquer()
+	    : _00_test("Maximum subarray sum divided & conquer")
+	{
+	}
+
+	int maxSubArray(const vector<int> &nums) override
+	{
+		return solve(nums, 0, size(nums) - 1);
+	}
+
+	int solve(const vector<int> &A, int L, int R)
+	{
+		if (L > R) return INT_MIN;
+		int mid = (L + R) / 2, leftSum = 0, rightSum = 0;
+
+		for (int i = mid - 1, curSum = 0; i >= L; i--) {
+			curSum += A[i];
+			leftSum = max(leftSum, curSum);
 		}
 
-		if (curr_sum < 0) {
-			curr_sum = 0;
-			_s = i + 1;
+		for (int i = mid + 1, curSum = 0; i <= R; i++) {
+			curSum += A[i];
+			rightSum = max(rightSum, curSum);
 		}
-	}
-	int t = 0;
-	for (int i = b; i <= e; i++) t += nums[i];
-	return t == sum ? sum : INT_MIN;
-}
 
-/**
- * TC: O(N log N)
- * SC: O(log N)
- *
- * Recurrence relation for this method T(N) = 2T(N/2) + O(N) as:
- *
- * - Recurring for left and right half (2T(N/2)).
- * - Calculating maximum subarray sum O(N).
- *
- * Solving this recurrence using master theorem to get TC O(N log N)
+		return max({solve(A, L, mid - 1), solve(A, mid + 1, R),
+		            leftSum + A[mid] + rightSum});
+	}
+};
+
+/* ===========================================================================
+ * Test code
+ * ===========================================================================
  */
-int _06_dc_recusive_solve(vector<int> &A, int L, int R)
+string _vec2str(const vector<int> &vec)
 {
-	if (L > R) return INT_MIN;
-	int mid = (L + R) / 2, leftSum = 0, rightSum = 0;
-
-	// leftSum = max subarray sum in [L, mid-1] and starting from mid-1
-	for (int i = mid - 1, curSum = 0; i >= L; i--) {
-		curSum += A[i];
-		leftSum = max(leftSum, curSum);
-	}
-
-	// rightSum = max subarray sum in [mid+1, R] and starting from mid+1
-	for (int i = mid + 1, curSum = 0; i <= R; i++) {
-		curSum += A[i];
-		rightSum = max(rightSum, curSum);
-	}
-
-	// return max of: left subarray, right subarray & mid subarry sums
-	return max({_06_dc_recusive_solve(A, L, mid - 1),
-	            _06_dc_recusive_solve(A, mid + 1, R),
-	            leftSum + A[mid] + rightSum});
+	ostringstream oss;
+	oss << "{";
+	copy(vec.begin(), vec.end() - 1, ostream_iterator<int>(oss, ", "));
+	oss << vec.back();
+	oss << "}";
+	return oss.str();
 }
 
-int _06_divide_conquer(vector<int> nums)
-{
-	return _06_dc_recusive_solve(nums, 0, size(nums) - 1);
-}
-
-typedef std::function<int(std::vector<int>)> func_t;
-
-void test_impl(vector<vector<int>> ip, vector<int> op, func_t impl)
+void test_impl(vector<vector<int>> &ip, vector<int> &op,
+               shared_ptr<_00_test> f)
 {
 	for (size_t i = 0; i < ip.size(); i++) {
-		int t = impl(ip[i]);
-		if (op[i] != t) {
-			cerr << "test failed: expected " << op[i]
-			     << ", actual " << t << endl;
+		int t = f->maxSubArray(ip[i]);
+		if (t != op[i]) {
+			cerr << f->getName() << " test failed: "
+			     << "expected " << op[i] << ", actual " << t
+			     << "." << endl;
 			exit(1);
 		}
-		cout << t << endl;
+
+		if (getenv("SHOW_TEST_OUTPUT"))
+			cout << "  test-" << i << ":  "
+			     << "input: nums = " << _vec2str(ip[i])
+			     << "  output: maxSub = " << t << "\n";
 	}
 }
 
@@ -219,16 +296,24 @@ int main(int, char **)
 	    {1},
 	    {5, 4, -1, 7, 8},
 	};
+
 	vector<int> op{6, 1, 23};
-	vector<func_t> impls{
-	    _01_brute_force,
-	    _02_recursive,
-	    _03_dynamic_programming_memoization,
-	    _04_dynamic_programming_tabulation,
-	    _05_kadanes_algorithm,
-	    _06_divide_conquer,
+
+	vector<shared_ptr<_00_test>> impls{
+	    make_shared<_01_brute_force>(), make_shared<_02_recursive>(),
+	    make_shared<_03_dp_memo>(),     make_shared<_04_dp_tab>(),
+	    make_shared<_05_kadanes>(),     make_shared<_06_divide_conquer>(),
 	};
 
-	for (auto &impl : impls) test_impl(ip, op, impl);
+	for (size_t i = 0; i < impls.size(); i++) {
+		if (getenv("SHOW_TEST_OUTPUT"))
+			cout << "Testing implementation " << i + 1 << " "
+			     << impls[i]->getName() << "\n";
+
+		test_impl(ip, op, impls[i]);
+	}
+
+	cout << "Executed " << impls.size() << " implementations"
+	     << " with " << ip.size() << " tests." << endl;
 	return 0;
 }

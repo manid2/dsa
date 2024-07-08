@@ -36,35 +36,98 @@
 
 using namespace std;
 
-int minParens(const string &s)
+/* ===========================================================================
+ * Test helpers
+ * ===========================================================================
+ */
+class _00_test
 {
-	if (s.empty()) return 0;
+public:
+	_00_test(const string &name) : name(name) {}
 
-	int b = 0, r = 0;
+	string getName(void) const { return name; }
 
-	for (size_t i = 0; i < s.size(); i++) {
-		b += (s[i] == '(' ? 1 : -1);
-		if (b == -1) {
-			b++;
-			r++;
-		}
+	virtual int minParens(string str) = 0;
+
+private:
+	string name;
+};
+
+/* ===========================================================================
+ * Algorithms implementation
+ * ===========================================================================
+ */
+
+/* TC : O(n)
+ * SC : O(1)
+ */
+class _01_iterative : public _00_test
+{
+public:
+	_01_iterative()
+	    : _00_test("Minimum parentheses required to valid - Iterative")
+	{
 	}
-	return b + r;
+
+	int minParens(string s) override
+	{
+		if (s.empty()) return 0;
+		int b = 0, r = 0;
+		for (size_t i = 0; i < s.size(); i++) {
+			b += (s[i] == '(' ? 1 : -1);
+			if (b == -1) {
+				b++;
+				r++;
+			}
+		}
+		return b + r;
+	}
+};
+
+class _02_stack;
+class _03_string;
+
+/* ===========================================================================
+ * Test code
+ * ===========================================================================
+ */
+void test_impl(const vector<string> &ip, const vector<int> &op,
+               shared_ptr<_00_test> f)
+{
+	for (size_t i = 0; i < ip.size(); i++) {
+		int t = f->minParens(ip[i]);
+		if (t != op[i]) {
+			cerr << f->getName() << " test failed: "
+			     << "expected " << op[i] << ", actual " << t
+			     << "." << endl;
+			exit(1);
+		}
+
+		if (getenv("SHOW_TEST_OUTPUT"))
+			cout << "  test-" << i << ":  "
+			     << "input: str = " << ip[i]
+			     << "  output: min = " << t << "\n";
+	}
 }
 
 int main(int, char **)
 {
-	vector ip{"())", "((("};
-	vector op{1, 3};
+	vector<string> ip{{"())"}, {"((("}};
+	vector<int> op{1, 3};
 
-	for (size_t i = 0; i < ip.size(); i++) {
-		int t = minParens(ip[i]);
-		if (op[i] != t) {
-			cerr << "test failed: expected " << op[i]
-			     << ", actual" << t << endl;
-			return 1;
-		}
-		cout << t << endl;
+	vector<shared_ptr<_00_test>> impls{
+	    make_shared<_01_iterative>(),
+	};
+
+	for (size_t i = 0; i < impls.size(); i++) {
+		if (getenv("SHOW_TEST_OUTPUT"))
+			cout << "Testing implementation " << i + 1 << " "
+			     << impls[i]->getName() << "\n";
+
+		test_impl(ip, op, impls[i]);
 	}
+
+	cout << "Executed " << impls.size() << " implementations"
+	     << " with " << ip.size() << " tests." << endl;
 	return 0;
 }

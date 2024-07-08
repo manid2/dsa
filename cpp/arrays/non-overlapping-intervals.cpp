@@ -44,52 +44,125 @@
 
 using namespace std;
 
+/* ===========================================================================
+ * Test helpers
+ * ===========================================================================
+ */
+class _00_test
+{
+public:
+	_00_test(const string &name) : name(name) {}
+
+	string getName(void) const { return name; }
+
+	virtual int eraseOverlapIntervals(vector<vector<int>> &intervals) = 0;
+
+private:
+	string name;
+};
+
+/* ===========================================================================
+ * Algorithms implementation
+ * ===========================================================================
+ */
+
 /**
- * TC: O(N log N)
+ * TC: O(n log n + n)
  * SC: O(1)
  */
-int eraseOverlapIntervals(vector<vector<int>> &intervals)
+class _01_greedy : public _00_test
 {
-	sort(intervals.begin(), intervals.end(),
-	     [](vector<int> &a, vector<int> &b) { return a[0] < b[0]; });
-	int c = 0;
-	int p = 0, n = 1;
-	for (; n < static_cast<int>(intervals.size()); n++) {
-		if (intervals[p][1] > intervals[n][0]) {
-			c++;
-			if (intervals[p][1] > intervals[n][1]) p = n;
-		} else
-			p = n;
+public:
+	_01_greedy() : _00_test("Non overlapping intervals greedy") {}
+
+	int eraseOverlapIntervals(vector<vector<int>> &intervals) override
+	{
+		sort(intervals.begin(), intervals.end(),
+		     [](vector<int> &a, vector<int> &b) {
+			     return a[0] < b[0];
+		     });
+		int c = 0;
+		int p = 0, n = 1;
+		for (; n < static_cast<int>(intervals.size()); n++) {
+			if (intervals[p][1] > intervals[n][0]) {
+				c++;
+				if (intervals[p][1] > intervals[n][1]) p = n;
+			} else
+				p = n;
+		}
+		return c;
 	}
-	return c;
+};
+
+/* ===========================================================================
+ * Test code
+ * ===========================================================================
+ */
+using vec2_t = vector<vector<int>>;
+
+string _vec2str(const vector<int> &vec)
+{
+	ostringstream oss;
+	oss << "{";
+	copy(vec.begin(), vec.end() - 1, ostream_iterator<int>(oss, ", "));
+	oss << vec.back();
+	oss << "}";
+	return oss.str();
 }
 
-typedef std::function<int(std::vector<std::vector<int>> &)> func_t;
+string _2vec2str(const vec2_t &vec2)
+{
+	ostringstream oss;
+	oss << "{";
+	for (int i = 0; auto &v : vec2) {
+		if (i++) oss << ", ";
+		oss << _vec2str(v);
+	}
+	oss << "}";
+	return oss.str();
+}
 
-void test_impl(vector<vector<vector<int>>> ip, vector<int> op, func_t impl)
+void test_impl(vector<vec2_t> &ip, const vector<int> &op,
+               shared_ptr<_00_test> f)
 {
 	for (size_t i = 0; i < ip.size(); i++) {
-		int t = impl(ip[i]);
+		int t = f->eraseOverlapIntervals(ip[i]);
 		if (op[i] != t) {
-			cerr << "test failed: expected " << op[i]
-			     << ", actual " << t << endl;
+			cerr << f->getName() << " test failed: "
+			     << "expected " << op[i] << ", actual " << t
+			     << "." << endl;
 			exit(1);
 		}
-		cout << t << endl;
+
+		if (getenv("SHOW_TEST_OUTPUT"))
+			cout << "  test-" << i << ":  "
+			     << "input: intervals = " << _2vec2str(ip[i])
+			     << "  output: min = " << t << "\n";
 	}
 }
 
 int main(int, char **)
 {
-	vector<vector<vector<int>>> ip{
+	vector<vec2_t> ip{
 	    {{1, 2}, {2, 3}, {3, 4}, {1, 3}},
 	    {{1, 20}, {2, 3}, {3, 4}, {1, 3}, {4, 5}},
 	};
+
 	vector<int> op{1, 2};
-	vector<func_t> impls{
-	    eraseOverlapIntervals,
+
+	vector<shared_ptr<_00_test>> impls{
+	    make_shared<_01_greedy>(),
 	};
 
-	for (auto &impl : impls) test_impl(ip, op, impl);
+	for (size_t i = 0; i < impls.size(); i++) {
+		if (getenv("SHOW_TEST_OUTPUT"))
+			cout << "Testing implementation " << i + 1 << " "
+			     << impls[i]->getName() << "\n";
+
+		test_impl(ip, op, impls[i]);
+	}
+
+	cout << "Executed " << impls.size() << " implementations"
+	     << " with " << ip.size() << " tests." << endl;
 	return 0;
 }

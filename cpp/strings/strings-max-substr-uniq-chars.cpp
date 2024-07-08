@@ -47,98 +47,187 @@
 
 using namespace std;
 
-/* Time complexity: O(n^3) cubic */
-int _01_brute_force(string s)
+/* ===========================================================================
+ * Test helpers
+ * ===========================================================================
+ */
+class _00_test
 {
-	auto is_uniq = [](string s, int b, int e) -> bool {
-		vector m(128, 0);
-		for (int k = b; k <= e; k++) {
-			if (m[s[k]]++) return false;
-		}
-		return true;
-	};
+public:
+	_00_test(const string &name) : name(name) {}
 
-	int n = static_cast<int>(s.size());
-	int d = 0;
-	for (int b = 0; b < n; b++)
-		for (int e = b; e < n; e++)
-			if (is_uniq(s, b, e)) d = max(d, e - b + 1);
-	return d;
-}
+	string getName(void) const { return name; }
 
-/* Time complexity: O(n^2) square */
-int _02_sliding_window(string s)
+	virtual int maxLenUniqCharsSubstr(const string &str) = 0;
+
+private:
+	string name;
+};
+
+/* ===========================================================================
+ * Algorithms implementation
+ * ===========================================================================
+ */
+
+/* TC : O(n^3)
+ * SC : O(1)
+ */
+class _01_brute_force : public _00_test
 {
-	int n = static_cast<int>(s.size());
-	int b = 0, e = 0, d = 0;
-	while (b < n) {
-		vector m(128, 0);
-		e = b;
-		while (e < n && !m[s[e]]) {
-			d = max(d, e - b + 1);
-			m[s[e++]]++;
-		}
-		b++;
+public:
+	_01_brute_force()
+	    : _00_test("Longest Substring Without Repeating Characters brute "
+	               "force")
+	{
 	}
-	return d;
-}
 
-/* Time complexity: O(n) linear */
-int _03_optmized_sliding_window(string s)
+	int maxLenUniqCharsSubstr(const string &s) override
+	{
+		auto is_uniq = [](string s, int b, int e) -> bool {
+			vector m(128, 0);
+			for (int k = b; k <= e; k++) {
+				if (m[s[k]]++) return false;
+			}
+			return true;
+		};
+
+		int n = static_cast<int>(s.size());
+		int d = 0;
+		for (int b = 0; b < n; b++)
+			for (int e = b; e < n; e++)
+				if (is_uniq(s, b, e)) d = max(d, e - b + 1);
+		return d;
+	}
+};
+
+/* TC : O(n^2)
+ * SC : O(1)
+ */
+class _02_sliding_window : public _00_test
 {
-	int n = static_cast<int>(s.size());
-	vector m(128, 0);
-	int b = 0, e = 0, d = 0;
-	while (b < n && e < n) {
-		if (!m[s[e]]++) {
-			e++;
+public:
+	_02_sliding_window()
+	    : _00_test("Longest Substring Without Repeating Characters "
+	               "sliding window")
+	{
+	}
+
+	int maxLenUniqCharsSubstr(const string &s) override
+	{
+		int n = static_cast<int>(s.size());
+		int b = 0, e = 0, d = 0;
+		while (b < n) {
+			vector m(128, 0);
+			e = b;
+			while (e < n && !m[s[e]]) {
+				d = max(d, e - b + 1);
+				m[s[e++]]++;
+			}
+			b++;
+		}
+		return d;
+	}
+};
+
+/* TC : O(n)
+ * SC : O(1)
+ */
+class _03_optmized_sliding_window : public _00_test
+{
+public:
+	_03_optmized_sliding_window()
+	    : _00_test("Longest Substring Without Repeating Characters "
+	               "optimized sliding window")
+	{
+	}
+
+	int maxLenUniqCharsSubstr(const string &s) override
+	{
+		int n = static_cast<int>(s.size());
+		vector m(128, 0);
+		int b = 0, e = 0, d = 0;
+		while (b < n && e < n) {
+			if (!m[s[e]]++) {
+				e++;
+				d = max(d, e - b);
+			} else
+				m[s[b++]] = 0;
+		}
+		return d;
+	}
+};
+
+/* TC : O(n)
+ * SC : O(1)
+ */
+class _04_counter_sliding_window : public _00_test
+{
+public:
+	_04_counter_sliding_window()
+	    : _00_test("Longest Substring Without Repeating Characters "
+	               "counter sliding window")
+	{
+	}
+
+	int maxLenUniqCharsSubstr(const string &s) override
+	{
+		vector<int> m(128, 0);
+		int c = 0, b = 0, e = 0, d = 0;
+		while (e < static_cast<int>(s.size())) {
+			if (m[s[e++]]++) c++;
+			while (c)
+				if (m[s[b++]]-- > 1) c--;
 			d = max(d, e - b);
-		} else
-			m[s[b++]] = 0;
+		}
+		return d;
 	}
-	return d;
-}
+};
 
-/* Time complexity: O(n) linear */
-int _04_counter_sliding_window(string s)
-{
-	vector<int> m(128, 0);
-	int c = 0, b = 0, e = 0, d = 0;
-	while (e < static_cast<int>(s.size())) {
-		if (m[s[e++]]++) c++;
-		while (c)
-			if (m[s[b++]]-- > 1) c--;
-		d = max(d, e - b);
-	}
-	return d;
-}
-
-typedef std::function<int(std::string)> func_t;
-
-void test_impl(vector<string> ip, vector<int> op, func_t impl)
+/* ===========================================================================
+ * Test code
+ * ===========================================================================
+ */
+void test_impl(const vector<string> &ip, const vector<int> &op,
+               shared_ptr<_00_test> f)
 {
 	for (size_t i = 0; i < ip.size(); i++) {
-		int t = impl(ip[i]);
-		if (op[i] != t) {
-			cerr << "test failed: expected " << op[i]
-			     << ", actual " << t << endl;
+		int t = f->maxLenUniqCharsSubstr(ip[i]);
+		if (t != op[i]) {
+			cerr << f->getName() << " test failed: "
+			     << "expected " << op[i] << ", actual " << t
+			     << "." << endl;
 			exit(1);
 		}
-		cout << t << endl;
+
+		if (getenv("SHOW_TEST_OUTPUT"))
+			cout << "  test-" << i << ":  "
+			     << "input: str = " << ip[i]
+			     << "  output: maxLen = " << t << "\n";
 	}
 }
 
 int main(int, char **)
 {
 	vector<string> ip{"", "abcabcbb", "bbbbb", "pwwkew"};
+
 	vector<int> op{0, 3, 1, 3};
-	vector<func_t> impls{
-	    _01_brute_force,
-	    _02_sliding_window,
-	    _03_optmized_sliding_window,
-	    _04_counter_sliding_window,
+
+	vector<shared_ptr<_00_test>> impls{
+	    make_shared<_01_brute_force>(),
+	    make_shared<_02_sliding_window>(),
+	    make_shared<_03_optmized_sliding_window>(),
+	    make_shared<_04_counter_sliding_window>(),
 	};
 
-	for (auto &impl : impls) test_impl(ip, op, impl);
+	for (size_t i = 0; i < impls.size(); i++) {
+		if (getenv("SHOW_TEST_OUTPUT"))
+			cout << "Testing implementation " << i + 1 << " "
+			     << impls[i]->getName() << "\n";
+
+		test_impl(ip, op, impls[i]);
+	}
+
+	cout << "Executed " << impls.size() << " implementations"
+	     << " with " << ip.size() << " tests." << endl;
 	return 0;
 }

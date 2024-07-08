@@ -28,6 +28,21 @@ Coding guidelines
   for coding competitions.
 * Every C++ source file must build & run as a single file target the focus is
   on solving the problem correctly.
+* Each C++ compiled binary must output test result as a single line in this
+  fomrat `Executed M implementations with N tests.`. This makes it easy to
+  get tests summary.
+* For debugging each binary must print test name, test case number with input
+  and output in this format and only when enabled with environment variable
+  `SHOW_TEST_OUTPUT`:
+
+  ```text
+  Testing implementation M <Name>
+    test-0:  input: <i1 = v1>, <iX = vX>  output: <o = v>
+    ...
+    test-N:  input: <i1 = v1>, <iX = vX>  output: <o = v>
+  Executed M implementations with N tests.
+  ```
+
 * Must use latest C++ version (as of now C++20) to be updated with the latest
   additions, improvements to C++ and STL library.
 
@@ -46,4 +61,6 @@ make docs # generate sphinx docs
 make cpp/arrays/2sum-01        # build a test binary from .cpp source file
 make cpp/arrays/2sum-01-check  # run the test binary
 make cpp/arrays/2sum-01-format # format .cpp source file
+
+SHOW_TEST_OUTPUT=1 make cpp/arrays/2sum-01-check # run test with debug output
 ```

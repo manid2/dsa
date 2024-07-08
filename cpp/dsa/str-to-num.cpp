@@ -4,7 +4,6 @@
  * before the even ones and output the data
  */
 
-
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -54,9 +53,34 @@ getOddEvenNums(const std::vector<std::string> &input)
 	return oen;
 }
 
+/* ===========================================================================
+ * Test code
+ * ===========================================================================
+ */
+template <class T> string _vec2str(const vector<T> &vec)
+{
+	ostringstream oss;
+	oss << "{";
+	copy(vec.begin(), vec.end() - 1, ostream_iterator<T>(oss, ", "));
+	oss << vec.back();
+	oss << "}";
+	return oss.str();
+}
+
 int main(int, char **)
 {
 	std::vector<std::uint16_t> oen = getOddEvenNums(input);
-	for (auto &a : oen) { std::cout << a << " "; }
+
+	if (getenv("SHOW_TEST_OUTPUT"))
+		cout << "Testing implementation " << 1 << " "
+		     << "get odd & even numbers from vector string"
+		     << "\n"
+		     << "  test-" << 1 << ":  "
+		     << "input:  = " << _vec2str<string>(input)
+		     << "  output: oddEvenNums = " << _vec2str<uint16_t>(oen)
+		     << "\n";
+
+	cout << "Executed " << 1 << " implementations"
+	     << " with " << 1 << " tests." << endl;
 	return 0;
 }

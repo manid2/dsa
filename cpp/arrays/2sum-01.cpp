@@ -61,8 +61,10 @@ public:
 string _vec2str(vector<int> &vec)
 {
 	ostringstream oss;
+	oss << "{";
 	copy(vec.begin(), vec.end() - 1, ostream_iterator<int>(oss, ", "));
 	oss << vec.back();
+	oss << "}";
 	return oss.str();
 }
 
@@ -73,16 +75,16 @@ void test_impl(vector<pair<vector<int>, int>> &ip, vector<vector<int>> &op,
 		vector<int> t = f->twoSum(ip[i].first, ip[i].second);
 		if (t != op[i]) {
 			cerr << f->getName() << " test failed: "
-			     << "expected " << _vec2str(op[i])
-			     << ", actual " << _vec2str(t)
-			     << "." << endl;
+			     << "expected " << _vec2str(op[i]) << ", actual "
+			     << _vec2str(t) << "." << endl;
 			exit(1);
 		}
 
 		if (getenv("SHOW_TEST_OUTPUT"))
 			cout << "  test-" << i << ":  "
-			     << "nums = {" << _vec2str(ip[i].first) << "} "
-			     << "target = " << ip[i].second << "\n";
+			     << "input: nums = " << _vec2str(ip[i].first)
+			     << ", target = " << ip[i].second
+			     << "  output: indices = " << _vec2str(t) << "\n";
 	}
 }
 

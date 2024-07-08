@@ -32,7 +32,10 @@ void print_odd(int tidx)
 		std::unique_lock<std::mutex> lk(mx);
 		/* cv.wait(lock, predicate) handles spurious wake up */
 		cv.wait(lk, is_even);
-		std::cout << "thread " << tidx << ": " << sd++ << "\n";
+		if (getenv("SHOW_TEST_OUTPUT"))
+			std::cout << "  thread " << tidx << ": " << sd
+			          << "\n";
+		sd++;
 		cv.notify_one();
 	}
 }
@@ -43,7 +46,10 @@ void print_even(int tidx)
 		std::unique_lock<std::mutex> lk(mx);
 		/* cv.wait(lock, predicate) handles spurious wake up */
 		cv.wait(lk, is_odd);
-		std::cout << "thread " << tidx << ": " << sd++ << "\n";
+		if (getenv("SHOW_TEST_OUTPUT"))
+			std::cout << "  thread " << tidx << ": " << sd
+			          << "\n";
+		sd++;
 		cv.notify_one();
 	}
 }
@@ -51,9 +57,18 @@ void print_even(int tidx)
 int main(int, char **)
 {
 	int tidx[2] = {0, 1};
+
+	if (getenv("SHOW_TEST_OUTPUT"))
+		std::cout << "Testing implementation " << 1 << " "
+		          << "sync 2 threads to print odd & even numbers"
+		          << "\n";
+
 	std::thread t1(print_odd, tidx[0]);
 	std::thread t2(print_even, tidx[1]);
 	t1.join();
 	t2.join();
+
+	std::cout << "Executed " << 1 << " implementations"
+	          << " with " << 1 << " tests." << std::endl;
 	return 0;
 }

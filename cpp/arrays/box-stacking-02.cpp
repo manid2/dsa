@@ -18,9 +18,19 @@
 
 using namespace std;
 
-class _00_base
+/* ===========================================================================
+ * Test helpers
+ * ===========================================================================
+ */
+class _00_test
 {
 public:
+	_00_test(const string &name) : name(name) {}
+
+	string getName(void) const { return name; }
+
+	virtual int maxHeight(vector<vector<int>> &cuboids) = 0;
+
 	bool check(const vector<int> &prev, const vector<int> &curr)
 	{
 		return (prev[0] < curr[0] && prev[1] < curr[1]);
@@ -43,15 +53,25 @@ public:
 		}
 		return cr;
 	}
+
+private:
+	string name;
 };
 
-/* TC : O(n log n x 2^n)
+/* ===========================================================================
+ * Algorithms implementation
+ * ===========================================================================
+ */
+
+/* TC : O(n log n + 2^n)
  * SC : O(n)
  */
-class _01_recursive : public _00_base
+class _01_recursive : public _00_test
 {
 public:
-	int maxHeight(vector<vector<int>> &cuboids)
+	_01_recursive() : _00_test("Box stacking 02 recursive") {}
+
+	int maxHeight(vector<vector<int>> &cuboids) override
 	{
 		vector<vector<int>> cr = this->rotateCubiods(cuboids);
 		sort(cr.begin(), cr.end());
@@ -69,17 +89,20 @@ public:
 		int skip = solve(cuboids, prev, curr + 1);
 		return max(pick, skip);
 	}
-
-	int operator()(vector<vector<int>> &cuboids)
-	{
-		return this->maxHeight(cuboids);
-	}
 };
 
-class _02_dp_memo : public _00_base
+/* TC : O(n log n + n^2)
+ * SC : O(n^2)
+ */
+class _02_dp_memo : public _00_test
 {
 public:
-	int maxHeight(vector<vector<int>> &cuboids)
+	_02_dp_memo()
+	    : _00_test("Box stacking 02 dynamic problems memoization")
+	{
+	}
+
+	int maxHeight(vector<vector<int>> &cuboids) override
 	{
 		vector<vector<int>> cr = this->rotateCubiods(cuboids);
 		sort(cr.begin(), cr.end());
@@ -101,20 +124,19 @@ public:
 		int skip = solve(cuboids, prev, curr + 1, dp);
 		return dp[curr][prev + 1] = max(pick, skip);
 	}
-
-	int operator()(vector<vector<int>> &cuboids)
-	{
-		return this->maxHeight(cuboids);
-	}
 };
 
-/* TC O(n^2)
- * SC O(n^2)
+/* TC : O(n log n + n^2)
+ * SC : O(n^2)
  */
-class _03_dp_tab : public _00_base
+class _03_dp_tab : public _00_test
 {
 public:
-	int maxHeight(vector<vector<int>> &cuboids)
+	_03_dp_tab() : _00_test("Box stacking 02 dynamic problems tabulation")
+	{
+	}
+
+	int maxHeight(vector<vector<int>> &cuboids) override
 	{
 		vector<vector<int>> cr = this->rotateCubiods(cuboids);
 		sort(cr.begin(), cr.end());
@@ -132,20 +154,21 @@ public:
 		}
 		return dp[0][0];
 	}
-
-	int operator()(vector<vector<int>> &cuboids)
-	{
-		return this->maxHeight(cuboids);
-	}
 };
 
-/* TC O(n^2)
- * SC O(n)
+/* TC : O(n^2)
+ * SC : O(n)
  */
-class _04_dp_tab_space_optimized : public _00_base
+class _04_dp_tab_space_optimized : public _00_test
 {
 public:
-	int maxHeight(vector<vector<int>> &cuboids)
+	_04_dp_tab_space_optimized()
+	    : _00_test("Box stacking 02 dynamic programming tabulation space "
+	               "optimized")
+	{
+	}
+
+	int maxHeight(vector<vector<int>> &cuboids) override
 	{
 		vector<vector<int>> cr = this->rotateCubiods(cuboids);
 		sort(cr.begin(), cr.end());
@@ -163,11 +186,6 @@ public:
 		}
 		return last[0];
 	}
-
-	int operator()(vector<vector<int>> &cuboids)
-	{
-		return this->maxHeight(cuboids);
-	}
 };
 
 /**
@@ -175,10 +193,20 @@ public:
  *
  * https://leetcode.com/problems/maximum-height-by-stacking-cuboids/solutions/970293/java-c-python-dp-prove-with-explanation
  */
-class _05_dp_tab_simple : public _00_base
+
+/* TC O(n^2)
+ * SC O(n)
+ */
+class _05_dp_tab_simple : public _00_test
 {
 public:
-	int maxHeight(vector<vector<int>> &cuboids)
+	_05_dp_tab_simple()
+	    : _00_test("Box stacking 02 dynamic programming tabulation "
+	               "simple")
+	{
+	}
+
+	int maxHeight(vector<vector<int>> &cuboids) override
 	{
 		vector<vector<int>> cr = this->rotateCubiods(cuboids);
 		cr.push_back({0, 0, 0});
@@ -193,42 +221,79 @@ public:
 				}
 		return res;
 	}
-
-	int operator()(vector<vector<int>> &cuboids)
-	{
-		return this->maxHeight(cuboids);
-	}
 };
 
-using cuboids_t = std::vector<std::vector<int>>;
-typedef std::function<int(cuboids_t &)> func_t;
+/* ===========================================================================
+ * Test code
+ * ===========================================================================
+ */
+using vec2_t = vector<vector<int>>;
 
-void test_impl(vector<cuboids_t> ip, vector<int> op, func_t impl)
+string _vec2str(const vector<int> &vec)
+{
+	ostringstream oss;
+	oss << "{";
+	copy(vec.begin(), vec.end() - 1, ostream_iterator<int>(oss, ", "));
+	oss << vec.back();
+	oss << "}";
+	return oss.str();
+}
+
+string _2vec2str(const vec2_t &vec2)
+{
+	ostringstream oss;
+	oss << "{";
+	for (int i = 0; auto &v : vec2) {
+		if (i++) oss << ", ";
+		oss << _vec2str(v);
+	}
+	oss << "}";
+	return oss.str();
+}
+
+void test_impl(vector<vec2_t> &ip, const vector<int> &op,
+               shared_ptr<_00_test> f)
 {
 	for (size_t i = 0; i < ip.size(); i++) {
-		int t = impl(ip[i]);
+		int t = f->maxHeight(ip[i]);
 		if (op[i] != t) {
-			cerr << "test failed: expected " << op[i]
-			     << ", actual " << t << endl;
+			cerr << f->getName() << " test failed: "
+			     << "expected " << op[i] << ", actual " << t
+			     << "." << endl;
 			exit(1);
 		}
-		cout << t << endl;
+
+		if (getenv("SHOW_TEST_OUTPUT"))
+			cout << "  test-" << i << ":  "
+			     << "input: cuboids = " << _2vec2str(ip[i])
+			     << "  output: maxHeight = " << t << "\n";
 	}
 }
 
 int main(int, char **)
 {
-	vector<cuboids_t> ip{
+	vector<vec2_t> ip{
 	    {{4, 6, 7}, {1, 2, 3}, {4, 5, 6}, {10, 12, 32}},
 	};
+
 	vector<int> op{60};
 
-	vector<func_t> impls{
-	    _01_recursive(),     _02_dp_memo(),
-	    _03_dp_tab(),        _04_dp_tab_space_optimized(),
-	    _05_dp_tab_simple(),
+	vector<shared_ptr<_00_test>> impls{
+	    make_shared<_01_recursive>(),
+	    make_shared<_03_dp_tab>(),
+	    make_shared<_04_dp_tab_space_optimized>(),
+	    make_shared<_05_dp_tab_simple>(),
 	};
 
-	for (auto &impl : impls) test_impl(ip, op, impl);
+	for (size_t i = 0; i < impls.size(); i++) {
+		if (getenv("SHOW_TEST_OUTPUT"))
+			cout << "Testing implementation " << i + 1 << " "
+			     << impls[i]->getName() << "\n";
+
+		test_impl(ip, op, impls[i]);
+	}
+
+	cout << "Executed " << impls.size() << " implementations"
+	     << " with " << ip.size() << " tests." << endl;
 	return 0;
 }

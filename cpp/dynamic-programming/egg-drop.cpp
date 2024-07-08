@@ -10,13 +10,37 @@
 
 using namespace std;
 
-/* TC : O(n * (2^min(n,k))
- * SC : O(1) ignore recursive function calls stack
+/* ===========================================================================
+ * Test helpers
+ * ===========================================================================
  */
-class _01_recursive
+class _00_test
 {
 public:
-	int superEggDrop(int k, int n) { return find(k, n); }
+	_00_test(const string &name) : name(name) {}
+
+	string getName(void) const { return name; }
+
+	virtual int superEggDrop(int eggs, int floors) = 0;
+
+private:
+	string name;
+};
+
+/* ===========================================================================
+ * Algorithms implementation
+ * ===========================================================================
+ */
+
+/* TC : O(n * 2^n)
+ * SC : O(1) ignore recursive function calls stack
+ */
+class _01_recursive : public _00_test
+{
+public:
+	_01_recursive() : _00_test("Egg drop puzzle recursive") {}
+
+	int superEggDrop(int k, int n) override { return find(k, n); }
 
 	int find(int k, int n)
 	{
@@ -30,19 +54,23 @@ public:
 		}
 		return ans;
 	}
-
-	int operator()(int k, int n) { return this->superEggDrop(k, n); }
 };
 
-class _02_dp_memo; // TODO Implement
+class _02_dp_memo;
 
 /* TC : O((n * k) * log n)
  * SC : O(n *k)
  */
-class _03_dp_memo_binary_search
+class _03_dp_memo_binary_search : public _00_test
 {
 public:
-	int superEggDrop(int k, int n)
+	_03_dp_memo_binary_search()
+	    : _00_test("Egg drop puzzle dynamic programming tabulation "
+	               "binary search")
+	{
+	}
+
+	int superEggDrop(int k, int n) override
 	{
 		vector<vector<int>> dp(k + 1, vector<int>(n + 1, -1));
 		return find(k, n, dp);
@@ -69,21 +97,24 @@ public:
 		}
 		return dp[k][n] = ans;
 	}
-
-	int operator()(int k, int n) { return this->superEggDrop(k, n); }
 };
 
 /**
  * Solution taken from:
  * https://www.geeksforgeeks.org/egg-dropping-puzzle-dp-11/
  *
- * TC : O(N * K)
- * SC : O(N * K)
+ * TC : O(n * k)
+ * SC : O(n * k)
  */
-class _04_dp_tab
+class _04_dp_tab : public _00_test
 {
 public:
-	int superEggDrop(int k, int n)
+	_04_dp_tab()
+	    : _00_test("Egg drop puzzle dynamic programming tabulation")
+	{
+	}
+
+	int superEggDrop(int k, int n) override
 	{
 		vector<vector<int>> dp(k + 1, vector<int>(n + 1, 0));
 		int m = 0;
@@ -96,44 +127,52 @@ public:
 		}
 		return m;
 	}
-
-	int operator()(int k, int n) { return this->superEggDrop(k, n); }
 };
 
 /**
- * TC : O(N * log K)
- * SC : O(N)
+ * TC : O(n * log k)
+ * SC : O(n)
  */
-class _05_dp_tab_optimized
+class _05_dp_tab_space_optimized : public _00_test
 {
 public:
-	int superEggDrop(int k, int n)
+	_05_dp_tab_space_optimized()
+	    : _00_test("Egg drop puzzle dynamic programming tabulation space "
+	               "optimized")
+	{
+	}
+
+	int superEggDrop(int k, int n) override
 	{
 		vector<int> dp(k + 1, 0);
 		int m = 0;
-		for (; dp[k] < n; m++) {
-			for (int i = k; i > 0; i--) {
-				dp[i] += 1 + dp[i - 1];
-			}
-		}
+		for (; dp[k] < n; m++)
+			for (int i = k; i > 0; i--) dp[i] += 1 + dp[i - 1];
 		return m;
 	}
-
-	int operator()(int k, int n) { return this->superEggDrop(k, n); }
 };
 
-typedef std::function<int(int, int)> func_t;
-
-void test_impl(vector<std::pair<int, int>> ip, vector<int> op, func_t impl)
+/* ===========================================================================
+ * Test code
+ * ===========================================================================
+ */
+void test_impl(const vector<std::pair<int, int>> ip, const vector<int> op,
+               shared_ptr<_00_test> f)
 {
 	for (size_t i = 0; i < ip.size(); i++) {
-		int t = impl(ip[i].first, ip[i].second);
-		if (op[i] != t) {
-			cerr << "test failed: expected " << op[i]
-			     << ", actual " << t << endl;
+		int t = f->superEggDrop(ip[i].first, ip[i].second);
+		if (t != op[i]) {
+			cerr << f->getName() << " test failed: "
+			     << "expected " << op[i] << ", actual " << t
+			     << "." << endl;
 			exit(1);
 		}
-		cout << t << endl;
+
+		if (getenv("SHOW_TEST_OUTPUT"))
+			cout << "  test-" << i << ":  "
+			     << "input: eggs = " << ip[i].first
+			     << ", floors = " << ip[i].second
+			     << "  output: min = " << t << "\n";
 	}
 }
 
@@ -145,16 +184,28 @@ int main(int, char **)
 	    std::make_pair(3, 14),
 	    std::make_pair(2, 3),
 	};
+
 	vector<int> op{2, 3, 4, 2};
 
-	vector<func_t> impls{
-	    _01_recursive(), _03_dp_memo_binary_search(),
-	    /* FIXME segmentation fault
-	    _04_dp_tab(),
-	    _05_dp_tab_optimized(),
-	    */
+	/* FIXME segmentation fault
+	   _04_dp_tab(),
+	   _05_dp_tab_space_optimized(),
+	   */
+
+	vector<shared_ptr<_00_test>> impls{
+	    make_shared<_01_recursive>(),
+	    make_shared<_03_dp_memo_binary_search>(),
 	};
 
-	for (auto &impl : impls) test_impl(ip, op, impl);
+	for (size_t i = 0; i < impls.size(); i++) {
+		if (getenv("SHOW_TEST_OUTPUT"))
+			cout << "Testing implementation " << i + 1 << " "
+			     << impls[i]->getName() << "\n";
+
+		test_impl(ip, op, impls[i]);
+	}
+
+	cout << "Executed " << impls.size() << " implementations"
+	     << " with " << ip.size() << " tests." << endl;
 	return 0;
 }

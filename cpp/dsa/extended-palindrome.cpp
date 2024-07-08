@@ -35,7 +35,7 @@ bool iscp(string s, int d)
 	return isl(l);
 }
 
-int solution(string &s)
+int extendedPalindrome(string &s)
 {
 	if (isp(s)) return 1;
 
@@ -57,8 +57,23 @@ int solution(string &s)
 int main(int, char **)
 {
 	vector<string> vl = {"radar", "abcxyzabc", "microsoft"};
-	for (auto a : vl) {
-		cout << "s=" << a << "\n\tr=" << solution(a) << endl;
+
+	if (getenv("SHOW_TEST_OUTPUT"))
+		cout << "Testing implementation " << 1 << " "
+		     << "extended palindrome"
+		     << "\n";
+
+	for (int i = 0; i < static_cast<int>(vl.size()); i++) {
+		string s = vl[i];
+		int t = extendedPalindrome(s);
+
+		if (getenv("SHOW_TEST_OUTPUT"))
+			cout << "  test-" << i << ":  "
+			     << "input: str = " << vl[i]
+			     << "  output: num = " << t << "\n";
 	}
+
+	cout << "Executed " << 1 << " implementations"
+	     << " with " << 1 << " tests." << endl;
 	return 0;
 }

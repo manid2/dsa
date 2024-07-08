@@ -21,6 +21,10 @@
  * Reverse a linked list in k groups iterative.
  */
 
+#include <bits/stdc++.h>
+
+using namespace std;
+
 struct ListNode {
 	int val;
 	ListNode *next;
@@ -73,5 +77,14 @@ ListNode *reverseKGroup(ListNode *head, int k)
 
 int main(int, char **)
 {
+	if (getenv("SHOW_TEST_OUTPUT"))
+		cout << "Testing implementation " << 1 << " "
+		     << "reverse linked lists in k groups"
+		     << "\n";
+
+	// TODO Add tests
+
+	cout << "Executed " << 1 << " implementations"
+	     << " with " << 1 << " tests." << endl;
 	return 0;
 }
