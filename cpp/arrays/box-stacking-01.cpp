@@ -27,7 +27,7 @@ public:
 
 	int solve(vector<vector<int>> &cuboids, int prev, int curr)
 	{
-		if (curr == cuboids.size()) return 0;
+		if (curr == static_cast<int>(cuboids.size())) return 0;
 		int pick = INT_MIN;
 		if (prev == -1 || (cuboids[prev][0] <= cuboids[curr][0] &&
 		                   cuboids[prev][1] <= cuboids[curr][1] &&
@@ -165,7 +165,7 @@ void test_impl(vector<cuboids_t> ip, vector<int> op, func_t impl)
 	}
 }
 
-int main(int argc, char *argv[])
+int main(int, char **)
 {
 	vector<cuboids_t> ip{
 	    {{50, 45, 20}, {95, 37, 53}, {45, 23, 12}},

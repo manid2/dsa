@@ -109,7 +109,7 @@ class _05_dp_tab_optimized
 public:
 	int superEggDrop(int k, int n)
 	{
-		int dp[k + 1] = {0};
+		vector<int> dp(k + 1, 0);
 		int m = 0;
 		for (; dp[k] < n; m++) {
 			for (int i = k; i > 0; i--) {
@@ -137,7 +137,7 @@ void test_impl(vector<std::pair<int, int>> ip, vector<int> op, func_t impl)
 	}
 }
 
-int main(int argc, char *argv[])
+int main(int, char **)
 {
 	vector<std::pair<int, int>> ip{
 	    std::make_pair(1, 2),

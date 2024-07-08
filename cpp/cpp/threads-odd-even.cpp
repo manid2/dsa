@@ -48,7 +48,7 @@ void print_even(int tidx)
 	}
 }
 
-int main(int argc, char *argv[])
+int main(int, char **)
 {
 	int tidx[2] = {0, 1};
 	std::thread t1(print_odd, tidx[0]);

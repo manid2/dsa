@@ -46,7 +46,7 @@ public:
 
 	void sort(vector<int> &nums) override
 	{
-		size_t n = nums.size();
+		int n = static_cast<int>(nums.size());
 		for (int i = 0; i < n - 1; i++) {
 			bool swapped = false;
 			for (int j = 0; j < n - i - 1; j++) {
@@ -70,7 +70,7 @@ public:
 
 	void sort(vector<int> &nums) override
 	{
-		size_t n = nums.size();
+		int n = static_cast<int>(nums.size());
 		for (int i = 0; i < n - 1; i++) {
 			int m = i;
 			for (int j = i + 1; j < n; j++)
@@ -90,7 +90,7 @@ public:
 
 	void sort(vector<int> &nums) override
 	{
-		size_t n = nums.size();
+		int n = static_cast<int>(nums.size());
 		for (int i = 1; i < n; i++) {
 			int key = nums[i];
 			int j = i - 1;
@@ -134,7 +134,7 @@ void test_impl(vector<vector<int>> &ip, vector<vector<int>> &op,
 	}
 }
 
-int main(int argc, char *argv[])
+int main(int, char **)
 {
 	vector<vector<int>> ip{
 	    {5, 1, 4, 2, 8},

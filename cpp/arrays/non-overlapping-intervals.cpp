@@ -54,7 +54,7 @@ int eraseOverlapIntervals(vector<vector<int>> &intervals)
 	     [](vector<int> &a, vector<int> &b) { return a[0] < b[0]; });
 	int c = 0;
 	int p = 0, n = 1;
-	for (; n < intervals.size(); n++) {
+	for (; n < static_cast<int>(intervals.size()); n++) {
 		if (intervals[p][1] > intervals[n][0]) {
 			c++;
 			if (intervals[p][1] > intervals[n][1]) p = n;
@@ -79,7 +79,7 @@ void test_impl(vector<vector<vector<int>>> ip, vector<int> op, func_t impl)
 	}
 }
 
-int main(int argc, char *argv[])
+int main(int, char **)
 {
 	vector<vector<vector<int>>> ip{
 	    {{1, 2}, {2, 3}, {3, 4}, {1, 3}},

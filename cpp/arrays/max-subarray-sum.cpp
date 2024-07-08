@@ -79,7 +79,7 @@ int _01_brute_force(vector<int> nums)
  */
 int _02_recursive_solve(vector<int> &A, int i, bool mustPick)
 {
-	if (i >= size(A)) return mustPick ? 0 : INT_MIN;
+	if (i >= static_cast<int>(A.size())) return mustPick ? 0 : INT_MIN;
 	if (mustPick)
 		// either stop here or choose current element and recurse
 		return max(0, A[i] + _02_recursive_solve(A, i + 1, true));
@@ -100,7 +100,7 @@ int _02_recursive(vector<int> nums)
 int _03_dp_recusive_solve(vector<int> &A, int i, bool mustPick,
                           vector<vector<int>> &dp)
 {
-	if (i >= size(A)) return mustPick ? 0 : INT_MIN;
+	if (i >= static_cast<int>(A.size())) return mustPick ? 0 : INT_MIN;
 	if (dp[mustPick][i] != -1) return dp[mustPick][i];
 	if (mustPick)
 		// either stop here or choose current element and recurse
@@ -127,7 +127,7 @@ int _04_dynamic_programming_tabulation(vector<int> nums)
 {
 	// dp[i] is the maximum subarray sum ending at i
 	vector<int> dp(nums);
-	for (int i = 1; i < size(nums); i++)
+	for (int i = 1; i < static_cast<int>(nums.size()); i++)
 		dp[i] = max(nums[i], nums[i] + dp[i - 1]);
 	// maximum of all max subarray sums ending at i.
 	return *max_element(begin(dp), end(dp));
@@ -140,7 +140,7 @@ int _04_dynamic_programming_tabulation(vector<int> nums)
 int _05_kadanes_algorithm(vector<int> nums)
 {
 	int curr_sum = 0, sum = INT_MIN, b = 0, e = 0, _s = 0;
-	for (int i = 0; i < nums.size(); i++) {
+	for (int i = 0; i < static_cast<int>(nums.size()); i++) {
 		curr_sum += nums[i];
 		if (curr_sum > sum) {
 			sum = curr_sum;
@@ -212,7 +212,7 @@ void test_impl(vector<vector<int>> ip, vector<int> op, func_t impl)
 	}
 }
 
-int main(int argc, char *argv[])
+int main(int, char **)
 {
 	vector<vector<int>> ip{
 	    {-2, 1, -3, 4, -1, 2, 1, -5, 4},

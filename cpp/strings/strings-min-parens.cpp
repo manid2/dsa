@@ -52,7 +52,7 @@ int minParens(const string &s)
 	return b + r;
 }
 
-int main(int argc, char *argv[])
+int main(int, char **)
 {
 	vector ip{"())", "((("};
 	vector op{1, 3};

@@ -71,7 +71,7 @@ ListNode *reverseKGroup(ListNode *head, int k)
 	return dummy.next;
 }
 
-int main(int argc, char *argv[])
+int main(int, char **)
 {
 	return 0;
 }

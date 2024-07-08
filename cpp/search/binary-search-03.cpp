@@ -104,7 +104,7 @@ void test_impl(vector<pair<vector<int>, int>> &ip, vector<int> &op,
 	}
 }
 
-int main(int argc, char *argv[])
+int main(int, char **)
 {
 	vector<pair<vector<int>, int>> ip{
 	    {{4, 5, 6, 7, 0, 1, 2}, 0},

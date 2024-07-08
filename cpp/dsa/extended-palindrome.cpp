@@ -54,7 +54,7 @@ int solution(string &s)
 }
 
 // driver code
-int main(int v, char **a)
+int main(int, char **)
 {
 	vector<string> vl = {"radar", "abcxyzabc", "microsoft"};
 	for (auto a : vl) {

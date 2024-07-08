@@ -41,7 +41,7 @@ int thirdMax(vector<int> &a)
 	return *prev(m.end());
 }
 
-int main(int argc, char *argv[])
+int main(int, char **)
 {
 	vector<int> a{2, 3, 2, 1};
 	cout << thirdMax(a) << endl;

@@ -43,8 +43,9 @@ public:
 
 	vector<int> twoSum(vector<int> &a, int t) override
 	{
+		int n = static_cast<int>(a.size());
 		unordered_map<int, int> m;
-		for (int i = 0; i < a.size(); i++) {
+		for (int i = 0; i < n; i++) {
 			int c = t - a[i];
 			if (m.contains(c)) return {m[c], i};
 			m[a[i]] = i;
@@ -85,7 +86,7 @@ void test_impl(vector<pair<vector<int>, int>> &ip, vector<vector<int>> &op,
 	}
 }
 
-int main(int argc, char *argv[])
+int main(int, char **)
 {
 	vector<pair<vector<int>, int>> ip{
 	    {{2, 7, 11, 15}, 9},

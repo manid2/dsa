@@ -58,7 +58,7 @@ int _01_brute_force(string s)
 		return true;
 	};
 
-	size_t n = s.size();
+	int n = static_cast<int>(s.size());
 	int d = 0;
 	for (int b = 0; b < n; b++)
 		for (int e = b; e < n; e++)
@@ -69,7 +69,7 @@ int _01_brute_force(string s)
 /* Time complexity: O(n^2) square */
 int _02_sliding_window(string s)
 {
-	size_t n = s.size();
+	int n = static_cast<int>(s.size());
 	int b = 0, e = 0, d = 0;
 	while (b < n) {
 		vector m(128, 0);
@@ -86,7 +86,7 @@ int _02_sliding_window(string s)
 /* Time complexity: O(n) linear */
 int _03_optmized_sliding_window(string s)
 {
-	size_t n = s.size();
+	int n = static_cast<int>(s.size());
 	vector m(128, 0);
 	int b = 0, e = 0, d = 0;
 	while (b < n && e < n) {
@@ -104,7 +104,7 @@ int _04_counter_sliding_window(string s)
 {
 	vector<int> m(128, 0);
 	int c = 0, b = 0, e = 0, d = 0;
-	while (e < s.size()) {
+	while (e < static_cast<int>(s.size())) {
 		if (m[s[e++]]++) c++;
 		while (c)
 			if (m[s[b++]]-- > 1) c--;
@@ -128,7 +128,7 @@ void test_impl(vector<string> ip, vector<int> op, func_t impl)
 	}
 }
 
-int main(int ac, char **av)
+int main(int, char **)
 {
 	vector<string> ip{"", "abcabcbb", "bbbbb", "pwwkew"};
 	vector<int> op{0, 3, 1, 3};

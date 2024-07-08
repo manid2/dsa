@@ -54,7 +54,7 @@ getOddEvenNums(const std::vector<std::string> &input)
 	return oen;
 }
 
-int main(int ac, char **av)
+int main(int, char **)
 {
 	std::vector<std::uint16_t> oen = getOddEvenNums(input);
 	for (auto &a : oen) { std::cout << a << " "; }

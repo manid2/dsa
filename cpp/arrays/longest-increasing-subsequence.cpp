@@ -118,7 +118,7 @@ void test_impl(vector<vector<int>> ip, vector<int> op, func_t impl)
 	}
 }
 
-int main(int argc, char *argv[])
+int main(int, char **)
 {
 	vector<vector<int>> ip{
 	    {10, 9, 2, 5, 3, 7, 101, 18},
