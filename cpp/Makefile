@@ -51,7 +51,7 @@ check:
 clean:
 	rm -rf $(BINS)
 
-format:
+format: $(SRCS_FORMAT)
 
 lint:
 
