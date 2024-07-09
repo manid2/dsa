@@ -57,7 +57,8 @@ getOddEvenNums(const std::vector<std::string> &input)
  * Test code
  * ===========================================================================
  */
-template <class T> string _vec2str(const vector<T> &vec)
+template <class T>
+string _vec2str(const vector<T> &vec)
 {
 	ostringstream oss;
 	oss << "{";
