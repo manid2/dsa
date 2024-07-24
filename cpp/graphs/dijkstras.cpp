@@ -99,15 +99,18 @@ public:
 		d[s] = 0;
 
 		while (!pq.empty()) {
+			int x = pq.top().first;
 			int u = pq.top().second;
 			pq.pop();
+
+			if (x > d[u]) continue;
 
 			for (auto an : g[u]) {
 				int v = an.first;
 				int w = an.second;
 
-				if (d[v] > d[u] + w) {
-					d[v] = d[u] + w;
+				if (d[v] > x + w) {
+					d[v] = x + w;
 					p[v] = u;
 					pq.emplace(d[v], v);
 				}
