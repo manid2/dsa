@@ -71,28 +71,27 @@ public:
 	{
 		if (!head || !head->next || k < 2) return head;
 		NodePtr dummy = new_node(0);
-		NodePtr prev_head(dummy);
-		prev_head->next = head;
+		dummy->next = head;
+		NodePtr rprev(dummy);
 		for (;;) {
 			int ck = 0;
-			NodePtr t = prev_head->next;
+			NodePtr t = rprev->next;
 			while (t) {
 				if (++ck == k) break;
 				t = t->next;
 			}
 			if (ck < k) break;
-			NodePtr next_head = prev_head->next;
-			NodePtr curr = next_head, prev = nullptr,
-			        next = nullptr;
+			NodePtr rtail = rprev->next;
+			NodePtr curr = rtail, prev = nullptr, next = nullptr;
 			for (int i = 0; i < k; i++) {
 				next = curr->next;
 				curr->next = prev;
 				prev = curr;
 				curr = next;
 			}
-			prev_head->next = prev;
-			next_head->next = curr;
-			prev_head = next_head;
+			rprev->next = prev;
+			rtail->next = curr;
+			rprev = rtail;
 		}
 		return dummy->next;
 	}
