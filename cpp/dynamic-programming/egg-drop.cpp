@@ -2,8 +2,11 @@
  * 887. Super Egg Drop
  * ===================
  *
- * Solution taken from:
- * https://leetcode.com/problems/super-egg-drop/solutions/792736/cpp-explained-recursive-memoization-optimization-dp-well-explained-easy-to-understand
+ * Refer
+ *
+ * https://leetcode.com/problems/super-egg-drop/
+ * https://www.geeksforgeeks.org/egg-dropping-puzzle-dp-11/
+ * https://medium.com/@parv51199/egg-drop-problem-using-dynamic-programming-e22f67a1a7c3
  */
 
 #include <bits/stdc++.h>
@@ -65,7 +68,7 @@ class _03_dp_memo_binary_search : public _00_test
 {
 public:
 	_03_dp_memo_binary_search()
-	    : _00_test("Egg drop puzzle dynamic programming tabulation "
+	    : _00_test("Egg drop puzzle dynamic programming memoization "
 	               "binary search")
 	{
 	}
@@ -100,11 +103,8 @@ public:
 };
 
 /**
- * Solution taken from:
- * https://www.geeksforgeeks.org/egg-dropping-puzzle-dp-11/
- *
- * TC : O(n * k)
- * SC : O(n * k)
+ * TC : O(n * k^2) => O(n^3)
+ * SC : O(n * k)   => O(n^2)
  */
 class _04_dp_tab : public _00_test
 {
@@ -117,7 +117,45 @@ public:
 	int superEggDrop(int k, int n) override
 	{
 		vector<vector<int>> dp(k + 1, vector<int>(n + 1, 0));
-		int m = 0;
+
+		// For k eggs & 1 floor only 1 trail is required
+		for (int i = 1; i <= k; i++) dp[i][1] = 1;
+
+		// For 1 egg & n floors i'th trails are required
+		for (int i = 1; i <= n; i++) dp[1][i] = i;
+
+		for (int i = 2; i <= k; i++) {
+			for (int j = 2; j <= n; j++) {
+				dp[i][j] = INT_MAX;
+				// Find the min of max trails at each floor
+				for (int x = 1; x <= j; x++) {
+					int m = 1 + max(dp[i - 1][x - 1],
+					                dp[i][j - x]);
+					dp[i][j] = min(dp[i][j], m);
+				}
+			}
+		}
+		return dp[k][n];
+	}
+};
+
+/**
+ * TC : O(n * k)
+ * SC : O(n * k)
+ */
+class _05_dp_tab_optimized : public _00_test
+{
+public:
+	_05_dp_tab_optimized()
+	    : _00_test("Egg drop puzzle dynamic programming tabulation "
+	               "optimized O(n^2)")
+	{
+	}
+
+	int superEggDrop(int k, int n) override
+	{
+		vector<vector<int>> dp(n + 1, vector<int>(k + 1, 0));
+		int m = 0; // Number of moves
 		while (dp[m][k] < n) {
 			m++;
 			for (int i = 1; i <= k; i++) {
@@ -130,15 +168,15 @@ public:
 };
 
 /**
- * TC : O(n * log k)
+ * TC : O(n * k)
  * SC : O(n)
  */
-class _05_dp_tab_space_optimized : public _00_test
+class _06_dp_tab_optimized : public _00_test
 {
 public:
-	_05_dp_tab_space_optimized()
-	    : _00_test("Egg drop puzzle dynamic programming tabulation space "
-	               "optimized")
+	_06_dp_tab_optimized()
+	    : _00_test("Egg drop puzzle dynamic programming tabulation "
+	               "optimized TC: O(n * k), SC: O(n)")
 	{
 	}
 
@@ -187,14 +225,12 @@ int main(int, char **)
 
 	vector<int> op{2, 3, 4, 2};
 
-	/* FIXME segmentation fault
-	   _04_dp_tab(),
-	   _05_dp_tab_space_optimized(),
-	   */
-
 	vector<shared_ptr<_00_test>> impls{
 	    make_shared<_01_recursive>(),
 	    make_shared<_03_dp_memo_binary_search>(),
+	    make_shared<_04_dp_tab>(),
+	    make_shared<_05_dp_tab_optimized>(),
+	    make_shared<_06_dp_tab_optimized>(),
 	};
 
 	for (size_t i = 0; i < impls.size(); i++) {
