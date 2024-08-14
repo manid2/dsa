@@ -82,3 +82,4 @@ C++ programming
   examples.
 * Explain pros and cons of throwing from a constructor.
 * Explain main problems of throwing from a destructor.
+* SOLID, DRY, KISS, SFINAE (Substitution Failure Is Not An Error) principles.
