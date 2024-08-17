@@ -29,7 +29,7 @@ Coding guidelines
 * Every C++ source file must build & run as a single file target the focus is
   on solving the problem correctly.
 * Each C++ compiled binary must output test result as a single line in this
-  fomrat `Executed M implementations with N tests.`. This makes it easy to
+  format `Executed M implementations with N tests.`. This makes it easy to
   get tests summary.
 * For debugging each binary must print test name, test case number with input
   and output in this format and only when enabled with environment variable
