@@ -35,8 +35,8 @@ check: $(VENV_DIR)/testsdone
 clean:
 
 format: venv
-	@echo "Formatting python source files..."
-	@$(VENV_ACTIVATE) autopep8 -iar $(MODULES)
+	$(Q)echo "Formatting python source files..."
+	$(Q)$(VENV_ACTIVATE) autopep8 -iar $(MODULES)
 
 lint: flake8 pylint
 	$(info Linting OK.)

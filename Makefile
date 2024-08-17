@@ -59,7 +59,7 @@ CPP_SRCS_LINT:=$(addsuffix -lint,$(CPP_BINS))
 CPP_ALL:=$(CPP_BINS) $(CPP_BINS_CLEAN) $(CPP_SRCS_FORMAT) $(CPP_SRCS_LINT)
 
 $(CPP_BINS_CHECK):
-	@make --no-print-directory -C cpp $(@:cpp/%=%)
+	$(Q)make -C cpp $(@:cpp/%=%)
 
 $(CPP_ALL):
 	make -C cpp $(@:cpp/%=%)

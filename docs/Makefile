@@ -16,7 +16,7 @@ SOURCEDIR     = .
 BUILDDIR      = output
 
 html: venv
-	@$(VENV_ACTIVATE) $(SPHINXBUILD) -M $@ \
+	$(Q)$(VENV_ACTIVATE) $(SPHINXBUILD) -M $@ \
 		"$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS)
 
 venv: $(VENV_DONE)
