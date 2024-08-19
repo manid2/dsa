@@ -9,7 +9,7 @@ all: tests check
 include ../mk/common.mk
 
 CXX = /usr/bin/g++-13
-CXXFLAGS = -std=c++20 -Wall -Wextra -Wpedantic -Werror
+CXXFLAGS = -std=c++20 -Wall -Wextra -Wpedantic -Werror -I.
 
 BUILD_DIR:=build
 
