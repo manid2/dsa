@@ -6,7 +6,7 @@ using namespace std;
  * Test helpers
  * ===========================================================================
  */
-typedef std::ios_base &(*io_t)(std::ios_base &);
+typedef ios_base &(*io_t)(ios_base &);
 
 struct _test {
 	_test(const string &desc) : desc(desc), tc(0), off(cout.flags()) {}
@@ -24,6 +24,8 @@ struct _test {
 		io = {args...};
 	}
 	vector<io_t> getIo(void) const { return io; }
+
+	string em, am, im, om;
 
 private:
 	string desc;
@@ -62,14 +64,48 @@ static vector<_test *> _tests;
 #define SET_IO(...) this->setIo(__VA_ARGS__)
 #define RESET_IO()  cout.flags(this->off)
 
+#define SET_CUSTOM_FAIL_MSG(e, a)    this->em = (e), this->am = (a);
+#define SET_CUSTOM_SUCCESS_MSG(i, o) this->im = (i), this->om = (o);
+
+#define RESET_CUSTOM_MSG()                                                   \
+	this->em.clear(), this->am.clear();                                  \
+	this->im.clear(), this->om.clear()
+
+#define _GET_FAIL_MSG(e, a)                                                  \
+	cerr << "expected: ";                                                \
+	if (this->em.empty())                                                \
+		cerr << (e);                                                 \
+	else                                                                 \
+		cerr << this->em;                                            \
+	cerr << "  ";                                                        \
+	cerr << "actual: ";                                                  \
+	if (this->am.empty())                                                \
+		cerr << (a);                                                 \
+	else                                                                 \
+		cerr << this->am;                                            \
+	cerr << "." << endl
+
+#define _GET_SUCCESS_MSG(i, o)                                               \
+	cout << "input: ";                                                   \
+	if (this->im.empty())                                                \
+		cout << (i);                                                 \
+	else                                                                 \
+		cout << this->im;                                            \
+	cout << "  ";                                                        \
+	cout << "output: ";                                                  \
+	if (this->om.empty())                                                \
+		cout << (o);                                                 \
+	else                                                                 \
+		cout << this->om;                                            \
+	cout << ".\n"
+
 #define _CHECK(op, e, a)                                                     \
 	if (e op a) {                                                        \
 		this->incTc();                                               \
 	} else {                                                             \
 		cerr << "  test-" << (this->getTc() + 1) << " failed! ";     \
 		for (io_t _e : this->getIo()) cerr << _e;                    \
-		cerr << "expected " << (e) << ", actual " << (a) << "."      \
-		     << endl;                                                \
+		_GET_FAIL_MSG(e, a);                                         \
 		exit(1);                                                     \
 	}
 
@@ -80,8 +116,7 @@ static vector<_test *> _tests;
 	if (getenv("SHOW_TEST_OUTPUT")) {                                    \
 		cout << "  test-" << this->getTc() << ":  ";                 \
 		for (io_t _e : this->getIo()) cout << _e;                    \
-		cout << "input: " << (i) << "  "                             \
-		     << "output: " << (o) << "\n";                           \
+		_GET_SUCCESS_MSG(i, o);                                      \
 	}
 
 #define INIT_TEST_MAIN()                                                     \
