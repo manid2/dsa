@@ -36,7 +36,13 @@ private:
 
 static vector<_test *> _tests;
 
-#define _TEST_STRUCT(name) _test_##name
+// clang-format off
+#define _CONCAT_WITH(x, y, sp)  x ## sp ## y
+// clang-format on
+
+#define _CONCAT_NAME(x, y) _CONCAT_WITH(x, y, _)
+
+#define _TEST_STRUCT(name) _CONCAT_NAME(_test, name)
 
 #define TEST(name, desc)                                                     \
 	struct _TEST_STRUCT(name) : public _test {                           \
@@ -46,7 +52,7 @@ static vector<_test *> _tests;
 			_tests.push_back(this);                              \
 		}                                                            \
 	};                                                                   \
-	static _TEST_STRUCT(name) _test_instance_##name;                     \
+	static _TEST_STRUCT(name) _CONCAT_NAME(_test_instance, name);        \
 	void _TEST_STRUCT(name)::test_func()
 
 #define RUN_ALL_TESTS()                                                      \
