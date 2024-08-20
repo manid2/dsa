@@ -16,7 +16,9 @@
  * ===========================================================================
  */
 // also defined in stddef.h
-#define offsetof(st, m) ((size_t) & ((st *)0)->m)
+// clang-format off
+#define offsetof(st, m) ((size_t) &((st *)0)->m)
+// clang-format on
 
 #define container_of(ptr, type, member)                                      \
 	({                                                                   \

@@ -65,7 +65,7 @@ static vector<_test *> _tests;
 		tc += _tests[ts]->getTc();                                   \
 	}                                                                    \
 	cout << "Executed " << ts << " implementations"                      \
-	     << " with " << tc << " tests." << endl;
+	     << " with " << tc << " tests." << endl
 
 #define SET_IO(...) this->setIo(__VA_ARGS__)
 #define RESET_IO()  cout.flags(this->off)
@@ -131,3 +131,41 @@ static vector<_test *> _tests;
 		RUN_ALL_TESTS();                                             \
 		return 0;                                                    \
 	}
+
+/* ===========================================================================
+ * Utilities
+ * ===========================================================================
+ */
+// clang-format off
+#define FOR_I2N_TYPE(i, n, type) for (type i = 0; i < (n); i++)
+#define FOR_N2I_TYPE(i, n, type) for (type i = (n); i >= 0; i--)
+// clang-format on
+
+#define fii(i, n)  FOR_I2N_TYPE(i, (n), int)
+#define fsi(i, n)  FOR_I2N_TYPE(i, (n), size_t)
+#define frii(i, n) FOR_N2I_TYPE(i, (n), int)
+#define frsi(i, n) FOR_N2I_TYPE(i, (n), size_t)
+
+#define vi_t  vector<int>
+#define vi2_t vector<vi_t>
+
+#define vi_v(v, n, i)  vi_t v((n), (i))
+#define vi2_v(v, n, i) vi2_t v((n), vi_t((n), (i)))
+
+template <class T>
+ostream &operator<<(ostream &out, const vector<T> &c)
+{
+	out << "{";
+	for (int i = 0; const auto &e : c) out << (i++ ? ", " : "") << e;
+	out << "}";
+	return out;
+}
+
+template <class T>
+ostream &operator<<(ostream &out, const vector<vector<T>> &c)
+{
+	out << "{";
+	for (int i = 0; const auto &e : c) out << (i++ ? ", " : "") << e;
+	out << "}";
+	return out;
+}
