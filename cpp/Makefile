@@ -9,17 +9,18 @@ all: tests check
 include ../mk/common.mk
 
 CXX = /usr/bin/g++-13
-CXXFLAGS = -std=c++20 -Wall -Wextra -Wpedantic -Werror -I.
+CXXFLAGS = -std=c++20 -Wall -Wextra -Wpedantic -Werror -Iincludes
 
 BUILD_DIR:=build
 
+HDRS:=$(shell $(GIT_LS) -- 'includes/*.h')
 SRCS:=$(shell $(GIT_LS) -- '**/*.cpp')
 BINS:=$(patsubst %.cpp,$(BUILD_DIR)/%,$(SRCS:.cpp=))
 
 $(BINS): %: $(BUILD_DIR)/%.o
 	$(Q)$(CXX) $(CXXFLAGS) -o $(BUILD_DIR)/$@ $(BUILD_DIR)/$*.o
 
-$(BUILD_DIR)/%.o: %.cpp
+$(BUILD_DIR)/%.o: %.cpp $(HDRS)
 	$(Q)mkdir -p $(@D)
 	$(Q)$(CXX) $(CXXFLAGS) -c -o $@ $<
 
