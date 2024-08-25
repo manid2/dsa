@@ -137,17 +137,18 @@ static vector<_test *> _tests;
  * ===========================================================================
  */
 // clang-format off
-#define FOR_I2N_TYPE(i, n, type) for (type i = 0; i < (n); i++)
-#define FOR_N2I_TYPE(i, n, type) for (type i = (n); i >= 0; i--)
+#define FOR_I2N_(i, n, type) for (type i = 0; i < (n); i++)
+#define FOR_N2I_(i, n, type) for (type i = (n); i >= 0; i--)
 // clang-format on
 
-#define fii(i, n)  FOR_I2N_TYPE(i, (n), int)
-#define fsi(i, n)  FOR_I2N_TYPE(i, (n), size_t)
-#define frii(i, n) FOR_N2I_TYPE(i, (n), int)
-#define frsi(i, n) FOR_N2I_TYPE(i, (n), size_t)
+#define fii(i, n)  FOR_I2N_(i, (n), int)
+#define fsi(i, n)  FOR_I2N_(i, (n), size_t)
+#define frii(i, n) FOR_N2I_(i, (n), int)
+#define frsi(i, n) FOR_N2I_(i, (n), size_t)
 
 #define vi_t  vector<int>
 #define vi2_t vector<vi_t>
+#define umi_t unordered_map<int, int>
 
 #define vi_v(v, n, i)  vi_t v((n), (i))
 #define vi2_v(v, n, i) vi2_t v((n), vi_t((n), (i)))
