@@ -170,3 +170,11 @@ ostream &operator<<(ostream &out, const vector<vector<T>> &c)
 	out << "}";
 	return out;
 }
+
+template <class T>
+string to_string(const vector<T> &c)
+{
+	ostringstream oss;
+	oss << c;
+	return oss.str();
+}
