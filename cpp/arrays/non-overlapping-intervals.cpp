@@ -8,7 +8,7 @@
  * https://medium.com/swlh/non-overlapping-intervals-f0bce2dfc617
  */
 
-#include <tests.h>
+#include "tests.h"
 
 /* ===========================================================================
  * Algorithms implementation

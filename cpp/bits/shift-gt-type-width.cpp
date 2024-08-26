@@ -8,11 +8,7 @@
  * GCC produces warning and the output is logical 0.
  */
 
-#include <bitset>
-#include <iomanip>
-#include <iostream>
-
-using namespace std;
+#include "tests.h"
 
 template <class T>
 constexpr bitset<sizeof(size_t) * 8> bits(T x)
