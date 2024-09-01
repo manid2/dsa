@@ -2,8 +2,8 @@
  * Two pointers - sliding window technique - 01
  * ============================================
  *
- * Two pointers - sliding window technique is used to find subarrays or
- * substrings.
+ * This technique is used to find subarrays or substrings given a set of
+ * conditions.
  *
  * Refer:
  *
@@ -21,42 +21,46 @@
 /* TC : O(n)
  * SC : O(1)
  */
-
-#define _2p_sw_maxSubstrUniqChars_desc                                       \
+#define _2p_sw_maxSumKConseq_desc                                            \
 	"Two Pointers - Sliding Window - "                                   \
-	"Longest Substring Without Repeating Characters"
+	"Maximum sum of K consequent elements"
 
-int maxSubstrUniqChars(const string &s)
+int maxSumKConseq(const vi_t &a, int k)
 {
-	int n = size(s);
-	int l = 0, r = 0, d = 0;
-	vi_v(m, 128, 0);
-	while (l < n && r < n) {
-		if (!m[s[r]]++)
-			r++, d = max(d, r - l);
-		else
-			m[s[l++]] = 0;
+	int n = size(a);
+	int r = 0, c = 0;
+	fii (i, k) r += a[i];
+	c = r;
+	for (int i = k; i < n; i++) {
+		c += a[i] - a[i - k];
+		r = max(r, c);
 	}
-	return d;
+	return r;
 }
 
 /* ===========================================================================
  * Test code
  * ===========================================================================
  */
-#define _2p_sw_maxSubstrUniqChars_check(i, e)                                \
+#define _2p_sw_maxSumKConseq_check(i, k, e)                                  \
 	{                                                                    \
-		int a = maxSubstrUniqChars(i);                               \
+		int a = maxSumKConseq(i, k);                                 \
 		CHECK_EQ(e, a);                                              \
+		string im = format("array = {}, k = {}", to_string(i), k);   \
+		SET_CUSTOM_SUCCESS_MSG(im, to_string(a));                    \
 		SHOW_OUTPUT(i, a);                                           \
 	}
 
-TEST(maxSubstrUniqChars, _2p_sw_maxSubstrUniqChars_desc)
+TEST(maxSumKConseq, _2p_sw_maxSumKConseq_desc)
 {
-	vector<string> ip{"", "abcabcbb", "bbbbb", "pwwkew"};
-	vector<int> op{0, 3, 1, 3};
-	int n = size(ip);
-	fii (i, n) _2p_sw_maxSubstrUniqChars_check(ip[i], op[i]);
+	vi2_t _a{
+	    {100, 200, 300, 400},
+	    {1, 4, 2, 10, 23, 3, 1, 0, 20},
+	};
+	vi_t _k{2, 4};
+	vi_t _e{700, 39};
+	int n = size(_a);
+	fii (i, n) _2p_sw_maxSumKConseq_check(_a[i], _k[i], _e[i]);
 }
 
 INIT_TEST_MAIN();
