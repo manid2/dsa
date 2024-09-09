@@ -8,14 +8,20 @@
  * thread 2: 4
  */
 
-#include <condition_variable>
-#include <iostream>
-#include <mutex>
-#include <thread>
+#include "tests.h"
 
+/* ===========================================================================
+ * Algorithms implementation
+ * ===========================================================================
+ */
+
+#define _th_oe_MutexCondVar_desc "Mutex & Conditional Variable"
+
+namespace MutexCondVar
+{
 /* threads synchronization primitives */
-std::mutex mx;
-std::condition_variable cv;
+mutex mx;
+condition_variable cv;
 
 /* shared data between threads */
 static int sd = 1;
@@ -23,52 +29,62 @@ static int sd = 1;
 #define MAX_DATA 10
 
 /* cv.wait() predicate objects don't take args */
-static inline bool is_odd() { return sd % 2; }
-static inline bool is_even() { return !is_odd(); }
+static bool is_odd() { return sd % 2; }
+static bool is_even() { return !is_odd(); }
 
-void print_odd(int tidx)
+using Predicate = function<bool()>;
+vpi_t a;
+
+void print(int tidx, Predicate pred)
 {
 	while (sd < MAX_DATA) {
-		std::unique_lock<std::mutex> lk(mx);
+		unique_lock<mutex> lk(mx);
 		/* cv.wait(lock, predicate) handles spurious wake up */
-		cv.wait(lk, is_even);
-		if (getenv("SHOW_TEST_OUTPUT"))
-			std::cout << "  thread " << tidx << ": " << sd
-			          << "\n";
+		cv.wait(lk, pred);
+		a.emplace_back(tidx, sd);
 		sd++;
 		cv.notify_one();
 	}
 }
+} // namespace MutexCondVar
 
-void print_even(int tidx)
+// TODO namespace Semaphores
+
+/* ===========================================================================
+ * Test code
+ * ===========================================================================
+ */
+ostream &operator<<(ostream &out, const vpi_t &c)
 {
-	while (sd < MAX_DATA) {
-		std::unique_lock<std::mutex> lk(mx);
-		/* cv.wait(lock, predicate) handles spurious wake up */
-		cv.wait(lk, is_odd);
-		if (getenv("SHOW_TEST_OUTPUT"))
-			std::cout << "  thread " << tidx << ": " << sd
-			          << "\n";
-		sd++;
-		cv.notify_one();
+	int n = size(c);
+	fii (i, n) {
+		int _tidx = c[i].first, _sd = c[i].second;
+		out << format("\n    thread {}: {}", _tidx, _sd);
 	}
+	return out;
 }
 
-int main(int, char **)
-{
-	int tidx[2] = {0, 1};
+#define _th_oe_desc_prefix "Threads odd even"
 
-	if (getenv("SHOW_TEST_OUTPUT"))
-		std::cout << "Testing implementation " << 1 << " "
-		          << "sync 2 threads to print odd & even numbers"
-		          << "\n";
+#define _TH_OE_NAME(var) var
+#define _TH_OE_DESC(var) _th_oe_desc_prefix " - " _th_oe_##var##_desc
 
-	std::thread t1(print_odd, tidx[0]);
-	std::thread t2(print_even, tidx[1]);
-	t1.join();
-	t2.join();
+#define _TH_OE_TEST(var)                                                     \
+	TEST(_TH_OE_NAME(var), _TH_OE_DESC(var))                             \
+	{                                                                    \
+		using namespace _TH_OE_NAME(var);                            \
+		vpi_t e;                                                     \
+		int n = MAX_DATA;                                            \
+		fii (i, n) e.emplace_back(i % 2, i + 1);                     \
+		int t = 0;                                                   \
+		vector<thread> th;                                           \
+		th.emplace_back(move(thread(print, t++, is_odd)));           \
+		th.emplace_back(move(thread(print, t++, is_even)));          \
+		for (auto &x : th) x.join();                                 \
+		CHECK_EQ(e, a);                                              \
+		SHOW_OUTPUT(n, a);                                           \
+	}
 
-	std::cout << "Executed " << 1 << " implementations"
-	          << " with " << 1 << " tests." << std::endl;
-	return 0;
-}
+_TH_OE_TEST(MutexCondVar);
+
+INIT_TEST_MAIN();

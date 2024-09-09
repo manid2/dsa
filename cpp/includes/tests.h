@@ -149,6 +149,8 @@ static vector<_test *> _tests;
 #define vi_t  vector<int>
 #define vi2_t vector<vi_t>
 #define umi_t unordered_map<int, int>
+#define pii_t pair<int, int>
+#define vpi_t vector<pii_t>
 
 #define vi_v(v, n, i)  vi_t v((n), (i))
 #define vi2_v(v, n, i) vi2_t v((n), vi_t((n), (i)))
