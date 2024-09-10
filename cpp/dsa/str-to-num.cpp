@@ -1,87 +1,65 @@
 /**
- * Given a vector of strings representing unsigned numbers, convert the
- * numbers to a collection of std::uint16_t in which the odd numbers appear
- * before the even ones and output the data
+ * Convert strings into integers & put odd ones before even
+ * ========================================================
  */
 
-#include <bits/stdc++.h>
+#include "tests.h"
 
-using namespace std;
-
-auto input = std::vector<std::string>{
-    "9", "0", "49", "2", "100", "not a number", "12 not a number too"};
-
-bool is_number(const std::string &s)
+/* ===========================================================================
+ * Algorithms implementation
+ * ===========================================================================
+ */
+static inline bool _is_number(const string &s)
 {
-	return !s.empty() && std::all_of(s.begin(), s.end(), ::isdigit);
+	return !empty(s) && all_of(begin(s), end(s), ::isdigit);
 }
 
-std::vector<std::uint16_t>
-getOddEvenNums(const std::vector<std::string> &input)
-{
-	std::vector<std::uint16_t> oen;
-	for (auto &a : input) {
-		std::uint16_t d = 0;
-		try {
-			if (is_number(a)) {
-				d = static_cast<std::uint16_t>(std::stoul(a));
-				oen.push_back(d);
-			}
-		} catch (std::invalid_argument const &ex) {
-			std::cout
-			    << "std::invalid_argument::what(): " << ex.what()
-			    << '\n';
-		} catch (std::out_of_range const &ex) {
-			std::cout
-			    << "std::out_of_range::what(): " << ex.what()
-			    << '\n';
-		}
-	}
+static inline bool _is_odd(int n) { return n % 2; }
+static inline bool _is_even(int n) { return !_is_odd(n); }
 
-	std::size_t s = 0;
-	std::size_t e = oen.size() - 1;
-	while (s < e) {
-		while (oen.at(s) % 2 == 0 && s < e) s++;
-		while (oen.at(e) % 2 != 1 && s < e) e--;
-		// similar to bubble sort swap odd & even numbers
-		if (s < e) {
-			std::swap(oen.at(s), oen.at(e));
-			s++;
-			e--;
+void _moveOddToBegin(vi_t &a)
+{
+	int l = 0, r = size(a) - 1;
+	while (l < r) {
+		while (_is_even(a[l]) && l < r) l++;
+		while (_is_odd(a[r]) && l < r) r--;
+		if (l < r) swap(a[l++], a[r--]);
+	}
+}
+
+vi_t oddEvens(const vector<string> &a)
+{
+	vi_t ret;
+	for (const auto &e : a) {
+		try {
+			if (_is_number(e)) ret.push_back(stoi(e));
+		} catch (std::invalid_argument const &ex) {
+			cerr << format("invalid argument: {}\n", ex.what());
+		} catch (std::out_of_range const &ex) {
+			cerr << format("out of range: {}\n", ex.what());
 		}
 	}
-	return oen;
+	_moveOddToBegin(ret);
+	return ret;
 }
 
 /* ===========================================================================
  * Test code
  * ===========================================================================
  */
-template <class T>
-string _vec2str(const vector<T> &vec)
+TEST(odd_evens, "Convert strings into integers & put odd ones before even")
 {
-	ostringstream oss;
-	oss << "{";
-	copy(vec.begin(), vec.end() - 1, ostream_iterator<T>(oss, ", "));
-	oss << vec.back();
-	oss << "}";
-	return oss.str();
+	vector<string> i = {"9",
+	                    "0",
+	                    "49",
+	                    "2",
+	                    "100",
+	                    "not a number",
+	                    "12 not a number too"};
+	vi_t e = {100, 0, 2, 49, 9};
+	vi_t a = oddEvens(i);
+	CHECK_EQ(e, a);
+	SHOW_OUTPUT(i, a);
 }
 
-int main(int, char **)
-{
-	std::vector<std::uint16_t> oen = getOddEvenNums(input);
-
-	if (getenv("SHOW_TEST_OUTPUT"))
-		cout << "Testing implementation " << 1 << " "
-		     << "get odd & even numbers from vector string"
-		     << "\n"
-		     << "  test-" << 1 << ":  "
-		     << "input:  = " << _vec2str<string>(input)
-		     << "  output: oddEvenNums = " << _vec2str<uint16_t>(oen)
-		     << "\n";
-
-	cout << "Executed " << 1 << " implementations"
-	     << " with " << 1 << " tests." << endl;
-	return 0;
-}
+INIT_TEST_MAIN();

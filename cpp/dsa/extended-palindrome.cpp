@@ -1,29 +1,31 @@
-// c++ code to get extended palindrome
+/**
+ * Extended palindrome
+ * ===================
+ *
+ * Refer:
+ *
+ * https://thejoboverflow.com/problem/337/
+ */
 
-#include <algorithm>
-#include <iostream>
-#include <vector>
+#include "tests.h"
 
-using namespace std;
+/* ===========================================================================
+ * Algorithms implementation
+ * ===========================================================================
+ */
+#define def_is_palin(T)                                                      \
+	bool _is_palindrome(const T &s)                                      \
+	{                                                                    \
+		T::const_iterator l, m;                                      \
+		T::const_reverse_iterator r;                                 \
+		l = begin(s), m = l + size(s) / 2, r = rbegin(s);            \
+		return equal(l, m, r);                                       \
+	}
 
-// you can write to stdout for debugging purposes, e.g.
-// cout << "this is a debug message" << endl;
+def_is_palin(string);
+def_is_palin(vector<string>);
 
-bool isp(string &s)
-{
-	string p = s;
-	reverse(p.begin(), p.end());
-	return (s == p);
-}
-
-bool isl(vector<string> &l)
-{
-	vector<string> r = l;
-	reverse(r.begin(), r.end());
-	return (r == l);
-}
-
-bool iscp(string s, int d)
+bool _iscp(string s, int d)
 {
 	size_t cs = s.size() / d;
 	size_t c = 0;
@@ -32,13 +34,12 @@ bool iscp(string s, int d)
 		string p(s.begin() + c, s.begin() + c + d);
 		l.push_back(p);
 	}
-	return isl(l);
+	return _is_palindrome(l);
 }
 
 int extendedPalindrome(string &s)
 {
-	if (isp(s)) return 1;
-
+	if (_is_palindrome(s)) return 1;
 	// get prime divisor of |s| or 1
 	size_t d = 1;
 	for (size_t i = 2; i < s.size(); i++) {
@@ -47,33 +48,25 @@ int extendedPalindrome(string &s)
 			break;
 		}
 	}
-
-	if (iscp(s, d)) return d;
-
+	if (_iscp(s, d)) return d;
 	return -1;
 }
 
-// driver code
-int main(int, char **)
+/* ===========================================================================
+ * Test code
+ * ===========================================================================
+ */
+TEST(extendedPalindrome, "Extended palindrome")
 {
-	vector<string> vl = {"radar", "abcxyzabc", "microsoft"};
-
-	if (getenv("SHOW_TEST_OUTPUT"))
-		cout << "Testing implementation " << 1 << " "
-		     << "extended palindrome"
-		     << "\n";
-
-	for (int i = 0; i < static_cast<int>(vl.size()); i++) {
-		string s = vl[i];
-		int t = extendedPalindrome(s);
-
-		if (getenv("SHOW_TEST_OUTPUT"))
-			cout << "  test-" << i << ":  "
-			     << "input: str = " << vl[i]
-			     << "  output: num = " << t << "\n";
+	vector<string> _i = {"radar", "abcxyzabc", "microsoft"};
+	vi_t _e = {1, 3, -1};
+	int n = size(_i);
+	fii (i, n) {
+		string &s = _i[i];
+		int a = extendedPalindrome(s);
+		CHECK_EQ(_e[i], a);
+		SHOW_OUTPUT(s, a);
 	}
-
-	cout << "Executed " << 1 << " implementations"
-	     << " with " << 1 << " tests." << endl;
-	return 0;
 }
+
+INIT_TEST_MAIN();
