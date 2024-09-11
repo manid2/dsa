@@ -10,47 +10,54 @@
 
 #include "tests.h"
 
+/* ===========================================================================
+ * Algorithms implementation
+ * ===========================================================================
+ */
 template <class T>
-constexpr bitset<sizeof(size_t) * 8> bits(T x)
+constexpr bitset<sizeof(T) * 8> bits(T x)
 {
-	return bitset<sizeof(size_t) * 8>(x);
+	return bitset<sizeof(T) * 8>(x);
 }
 
 #define nbits(x) (sizeof(x) * 8)
+#define b2s(x)   bits(x).to_string()
+#define sb(x, i) x << (nbits(x) - i)
 
 template <class T>
-inline void check(T x)
+T check(T x, string &im, string &om)
 {
-	if (getenv("SHOW_TEST_OUTPUT")) {
-		cout << "Testing implementation " << 1 << " "
-		     << "Bit shifting more than type width"
-		     << "\n"
-		     << "  test-0:  "
-		     << "\n"
-		     << "    input  x: " << bits(x)
-		     << " sizeof(x): " << nbits(x) << "\n"
-		     << "    output:  "
-		     << "\n";
+	T r;
+	im = format("x: {}, sizeof(x): {}", b2s(x), nbits(x));
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wshift-count-overflow"
-		cout << "       x << sizeof(x): " << bits(x << nbits(x))
-		     << "\n"
-		     << "       x << (sizeof(x) + 1): "
-		     << bits(x << (nbits(x) + 1)) << "\n";
+	om = format("x << (sizeof(x) - 1): {},  x << sizeof(x): {}",
+	            b2s(sb(x, 1)), b2s(sb(x, 0)));
+	r = sb(x, 0);
 #pragma GCC diagnostic pop
+	return r;
+}
 
-		cout << endl;
+/* ===========================================================================
+ * Test code
+ * ===========================================================================
+ */
+#define _bsg_check(T)                                                        \
+	{                                                                    \
+		T i = 1, a = i, e = 0;                                       \
+		string im, om;                                               \
+		a = check(a, im, om);                                        \
+		CHECK_EQ(e, a);                                              \
+		SHOW_OUTPUT(im, om);                                         \
 	}
-}
 
-int main(int, char **)
+TEST(check, "Bit shifting more than type width (undefined behavior)")
 {
-	size_t a = 1;
-
-	check(a);
-
-	cout << "Executed " << 1 << " implementations"
-	     << " with " << 1 << " tests." << endl;
-	return 0;
+	_bsg_check(char);
+	_bsg_check(short);
+	_bsg_check(int);
+	_bsg_check(size_t);
 }
+
+INIT_TEST_MAIN();
