@@ -159,7 +159,7 @@ int superEggDrop(int k, int n)
 		SHOW_OUTPUT(im, a);                                          \
 	}
 
-#define _ed_desc_prefix "Box stacking 01"
+#define _ed_desc_prefix "Super Egg Drop"
 
 #define _ED_NAME(var) var
 #define _ED_DESC(var) _ed_desc_prefix " - " _ed_##var##_desc
