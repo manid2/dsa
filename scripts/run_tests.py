@@ -61,10 +61,19 @@ def main():
 
     # run each cpp bin file
     for cmd in cpp_bins:
+        msg = cmd
         result = subprocess.check_output([cmd])
         result = result.decode("utf-8").rstrip()
-        result = result.partition('\n')[0] if len(result) else ""
-        print(cmd + " --> " + result)
+
+        if "SHOW_TEST_OUTPUT" in os.environ:
+            indent = " " * 2
+            result = "\n".join([indent + l for l in result.splitlines()])
+            msg += ":\n" + result + "\n"
+        else:
+            result = result.partition('\n')[0] if len(result) else ""
+            msg += " --> " + result
+
+        print(msg)
         cpp_ts.parse_ts(result)
 
     print("")
