@@ -49,8 +49,14 @@ Coding guidelines
 Build & test
 ------------
 
+This repository requires Gnu g++ compiler minimum version 13 to support C++20
+features such as `std::format()` used in code.
+
 This repository uses Gnu Makefile to run build and test tasks along with some
 helper tasks such as to run formatter, linter for source code.
+
+Build is tested and tests are verified on Gnu/Linux & Cygwin (Windows)
+operating systems.
 
 ### Examples
 
