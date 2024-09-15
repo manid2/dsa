@@ -15,7 +15,7 @@ MODULES:=$(sort $(dir $(shell $(GIT_LS) -- '*/__init__.py')))
 venv: $(VENV_DONE)
 
 $(VENV_DONE):
-	make -C ../ venv
+	$(MAKE) -C ../ venv
 
 flake8: venv
 	$(VENV_ACTIVATE) flake8 $(MODULES)

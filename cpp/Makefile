@@ -30,7 +30,7 @@ SRCS_FORMAT:=$(addsuffix -format,$(BINS))
 SRCS_LINT:=$(addsuffix -lint,$(BINS))
 
 $(BINS_CHECK):
-	$(Q)make $(@:-check=)
+	$(Q)$(MAKE) $(@:-check=)
 	$(Q)./$(BUILD_DIR)/$(@:-check=)
 
 $(BINS_CLEAN):

@@ -22,7 +22,7 @@ html: venv
 venv: $(VENV_DONE)
 
 $(VENV_DONE):
-	make -C ../ venv
+	$(MAKE) -C ../ venv
 
 # ============================================================================
 # Top level targets

@@ -16,22 +16,22 @@ FORMAT_SUB_DIRS:=$(foreach subdir,$(SUB_DIRS),format-$(subdir))
 LINT_SUB_DIRS:=$(foreach subdir,$(SUB_DIRS),lint-$(subdir))
 
 $(SUB_DIRS): venv
-	make -C $@
+	$(MAKE) -C $@
 
 $(TESTS_SUB_DIRS): venv
-	make -C $(@:tests-%=%) tests
+	$(MAKE) -C $(@:tests-%=%) tests
 
 $(CHECK_SUB_DIRS): $(TESTS_SUB_DIRS)
-	make -C $(@:check-%=%) check
+	$(MAKE) -C $(@:check-%=%) check
 
 $(CLEAN_SUB_DIRS):
-	make -C $(@:clean-%=%) clean
+	$(MAKE) -C $(@:clean-%=%) clean
 
 $(FORMAT_SUB_DIRS):
-	make -C $(@:format-%=%) format
+	$(MAKE) -C $(@:format-%=%) format
 
 $(LINT_SUB_DIRS):
-	make -C $(@:lint-%=%) lint
+	$(MAKE) -C $(@:lint-%=%) lint
 
 # ============================================================================
 # Setup venv for python and docs
@@ -59,10 +59,10 @@ CPP_SRCS_LINT:=$(addsuffix -lint,$(CPP_BINS))
 CPP_ALL:=$(CPP_BINS) $(CPP_BINS_CLEAN) $(CPP_SRCS_FORMAT) $(CPP_SRCS_LINT)
 
 $(CPP_BINS_CHECK):
-	$(Q)make -C cpp $(@:cpp/%=%)
+	$(Q)$(MAKE) -C cpp $(@:cpp/%=%)
 
 $(CPP_ALL):
-	make -C cpp $(@:cpp/%=%)
+	$(MAKE) -C cpp $(@:cpp/%=%)
 
 # ============================================================================
 # Top level targets
