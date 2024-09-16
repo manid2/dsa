@@ -7,140 +7,86 @@
  * https://www.programiz.com/dsa/floyd-warshall-algorithm
  */
 
-#include <bits/stdc++.h>
+#include "tests.h"
+#include "graphs.h"
 
-using namespace std;
-
-/* ===========================================================================
- * Data structures
- * ===========================================================================
- */
-// Graph is a V * V matrix where V is number of nodes
-using Graph = vector<vector<int>>;
-
-/* ===========================================================================
- * Test helpers
- * ===========================================================================
- */
-class _00_test
-{
-public:
-	_00_test(const string &name) : name(name) {}
-
-	string getName(void) const { return name; }
-
-	virtual Graph shortestPaths(Graph g) = 0;
-
-private:
-	string name;
-};
+using namespace Graphs;
 
 /* ===========================================================================
  * Algorithms implementation
  * ===========================================================================
  */
+#define _fw_desc "Floyd-Warshall - All pairs shortest paths"
 
+// Graph is a V * V matriX where V is number of nodes
 /* TC : O(V^3)
  * SC : O(V^2)
  */
-class _01_floy_warshall : public _00_test
+void _update(vi2_t &g, int k, int i, int j)
 {
-public:
-	_01_floy_warshall()
-	    : _00_test("Floyd-Warshall all pairs shortest paths")
-	{
-	}
+	if (g[i][k] != X && g[k][j] != X)
+		g[i][j] = min(g[i][j], g[i][k] + g[k][j]);
+}
 
-	void update(Graph &g, int k, int i, int j)
-	{
-		if (g[i][k] != INT_MAX && g[k][j] != INT_MAX)
-			g[i][j] = min(g[i][j], g[i][k] + g[k][j]);
+void shortestPaths(vi2_t &g)
+{
+	const int n = size(g);
+	fii (k, n) {
+		fii (i, n) {
+			fii (j, n) _update(g, k, i, j);
+		}
 	}
-
-	Graph shortestPaths(Graph g) override
-	{
-		const int n = static_cast<int>(g.size());
-		for (int k = 0; k < n; k++)
-			for (int i = 0; i < n; i++)
-				for (int j = 0; j < n; j++)
-					update(g, k, i, j);
-		return g;
-	}
-};
+}
 
 /* ===========================================================================
  * Test code
  * ===========================================================================
  */
-template <class Container = vector<int>>
-string _vec2str(const Container &vec)
-{
-	ostringstream oss;
-	using T = Container::value_type;
-	oss << "{";
-	copy(vec.begin(), vec.end() - 1, ostream_iterator<T>(oss, ", "));
-	oss << vec.back();
-	oss << "}";
-	return oss.str();
-}
-
-string _g2str(const Graph &g)
-{
-	ostringstream oss;
-	oss << "{";
-	for (int i = 0; auto e : g) {
-		if (i++) oss << ", ";
-		oss << _vec2str(e);
+#define _fw_check_eq(e, a, _pre, am)                                         \
+	{                                                                    \
+		string em;                                                   \
+		em = format("{} = {}", _pre, to_string(e));                  \
+		if (e != a) {                                                \
+			SET_CUSTOM_FAIL_MSG(em, am);                         \
+			FAIL();                                              \
+		}                                                            \
+		SUCCESS();                                                   \
 	}
-	oss << "}";
-	return oss.str();
-}
 
-void test_impl(const vector<Graph> &ip, const vector<Graph> &op,
-               shared_ptr<_00_test> f)
-{
-	for (size_t i = 0; i < ip.size(); i++) {
-		Graph t = f->shortestPaths(ip[i]);
-		if (t != op[i]) {
-			cerr << f->getName() << " test failed: "
-			     << "expected " << _g2str(op[i]) << ", actual "
-			     << _g2str(t) << "." << endl;
-			exit(1);
-		}
-
-		if (getenv("SHOW_TEST_OUTPUT"))
-			cout << "  test-" << i << ":  "
-			     << "input: graph = " << _g2str(ip[i])
-			     << "  output: shortestDist = " << _g2str(t)
-			     << "\n";
+#define _fw_check(i, e)                                                      \
+	{                                                                    \
+		vi2_t a = i;                                                 \
+		shortestPaths(a);                                            \
+		string _pre("Adjacency matrix"), im, am;                     \
+		im = format("{} = {}", _pre, to_string(i));                  \
+		am = format("{} = {}", _pre, to_string(a));                  \
+		_fw_check_eq(e, a, _pre, am);                                \
+		SHOW_OUTPUT(im, am);                                         \
 	}
-}
 
-int main(int, char **)
+TEST(shortestPaths, _fw_desc)
 {
-	const int x = INT_MAX;
-	vector<Graph> ip{
+	vector<vi2_t> _i{
 	    {
-	        {0, 3, x, 7},
-	        {8, 0, 2, x},
-	        {5, x, 0, 1},
-	        {2, x, x, 0},
+	        {0, 3, X, 7},
+	        {8, 0, 2, X},
+	        {5, X, 0, 1},
+	        {2, X, X, 0},
 	    },
 	    {
-	        {0, 5, x, 10},
-	        {x, 0, 3, x},
-	        {x, x, 0, 1},
-	        {x, x, x, 0},
+	        {0, 5, X, 10},
+	        {X, 0, 3, X},
+	        {X, X, 0, 1},
+	        {X, X, X, 0},
 	    },
 	    {
-	        {0, 3, x, 5},
-	        {2, 0, x, 4},
-	        {x, 1, 0, x},
-	        {x, x, 2, 0},
+	        {0, 3, X, 5},
+	        {2, 0, X, 4},
+	        {X, 1, 0, X},
+	        {X, X, 2, 0},
 	    },
 	};
-
-	vector<Graph> op{
+	vector<vi2_t> _e{
 	    {
 	        {0, 3, 5, 6},
 	        {5, 0, 2, 3},
@@ -149,9 +95,9 @@ int main(int, char **)
 	    },
 	    {
 	        {0, 5, 8, 9},
-	        {x, 0, 3, 4},
-	        {x, x, 0, 1},
-	        {x, x, x, 0},
+	        {X, 0, 3, 4},
+	        {X, X, 0, 1},
+	        {X, X, X, 0},
 	    },
 	    {
 	        {0, 3, 7, 5},
@@ -160,20 +106,8 @@ int main(int, char **)
 	        {5, 3, 2, 0},
 	    },
 	};
-
-	vector<shared_ptr<_00_test>> impls{
-	    make_shared<_01_floy_warshall>(),
-	};
-
-	for (size_t i = 0; i < impls.size(); i++) {
-		if (getenv("SHOW_TEST_OUTPUT"))
-			cout << "Testing implementation " << i + 1 << " "
-			     << impls[i]->getName() << "\n";
-
-		test_impl(ip, op, impls[i]);
-	}
-
-	cout << "Executed " << impls.size() << " implementations"
-	     << " with " << ip.size() << " tests." << endl;
-	return 0;
+	int n = size(_i);
+	fii (i, n) _fw_check(_i[i], _e[i]);
 }
+
+INIT_TEST_MAIN();

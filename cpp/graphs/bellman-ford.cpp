@@ -8,160 +8,85 @@
  * https://www.geeksforgeeks.org/bellman-ford-algorithm-dp-23/
  */
 
-#include <bits/stdc++.h>
+#include "tests.h"
+#include "graphs.h"
 
-using namespace std;
-
-/* ===========================================================================
- * Data structures
- * ===========================================================================
- */
-// Edge is a pair of nodes with weight [u, v, w]
-using Edge = array<int, 3>;
-
-// Graph is a pair of V nodes & array of E edges
-using Graph = pair<int, vector<Edge>>;
-
-/* ===========================================================================
- * Test helpers
- * ===========================================================================
- */
-class _00_test
-{
-public:
-	_00_test(const string &name) : name(name) {}
-
-	string getName(void) const { return name; }
-
-	virtual vector<int> shortestPaths(const Graph &g, int src = 0) = 0;
-
-private:
-	string name;
-};
+using namespace Graphs;
 
 /* ===========================================================================
  * Algorithms implementation
  * ===========================================================================
  */
+#define _bf_desc "Bellman-Ford - Single source shortest path to all nodes"
 
 /* TC : Best O(E), Average O(V*E), Worst O(V*E) => O(n^3) when E = V^2
  *      For a complete graph E = V(V-1)/2 => O(E) = O(V^2).
  * SC : O(V) => O(n)
  */
-class _01_bellman_ford : public _00_test
+vi_t shortestPaths(int nodes, const vi2_t &edges, int source)
 {
-public:
-	_01_bellman_ford()
-	    : _00_test("Bellman-Ford single source shortest path to all "
-	               "nodes")
-	{
+	int ne = size(edges);
+	vi_t d(nodes, X);
+	d[source] = 0;
+	fii (i, (nodes - 1)) {
+		fii (j, ne) {
+			int u = edges[j][0];
+			int v = edges[j][1];
+			int w = edges[j][2];
+			if (d[u] != X) d[v] = min(d[v], d[u] + w);
+		}
 	}
-
-	vector<int> shortestPaths(const Graph &g, int src = 0) override
-	{
-		const int n = g.first;
-		vector<int> d(n, INT_MAX);
-		d[src] = 0;
-		for (int i = 0; i < n - 1; i++)
-			for (auto [u, v, w] : g.second)
-				if (d[u] != INT_MAX)
-					d[v] = min(d[v], d[u] + w);
-		// Detect negative cycle
-		for (auto [u, v, w] : g.second)
-			if (d[u] != INT_MAX && d[v] > d[u] + w)
-				return {INT_MIN};
-		return d;
+	// Detect negative cycle
+	fii (j, ne) {
+		int u = edges[j][0];
+		int v = edges[j][1];
+		int w = edges[j][2];
+		if (d[u] != X && d[v] > d[u] + w) return {NX};
 	}
-};
+	return d;
+}
 
 /* ===========================================================================
  * Test code
  * ===========================================================================
  */
-template <class Container = vector<int>>
-string _vec2str(const Container &vec)
+#define _bf_check(n, ed, s, e)                                               \
+	vi_t a = shortestPaths(n, ed, s);                                    \
+	string _pre("distances"), im, am;                                    \
+	im += to_string(n, ed);                                              \
+	im += format(", source = {}", s);                                    \
+	am = format("{} = {}", _pre, to_string(a));                          \
+	CHECK_EQ(e, a);                                                      \
+	SHOW_OUTPUT(im, am);
+
+TEST(shortestPaths, _bf_desc)
 {
-	ostringstream oss;
-	using T = Container::value_type;
-	oss << "{";
-	copy(vec.begin(), vec.end() - 1, ostream_iterator<T>(oss, ", "));
-	oss << vec.back();
-	oss << "}";
-	return oss.str();
-}
+	vi_t _nodes = {4, 5, 5};
+	vi_t _sources = {0, 0, 0};
+	vector<vi2_t> _edges;
+	_edges.push_back({{2, 1, -10}, {3, 2, 3}, {0, 3, 5}, {0, 1, 4}});
+	_edges.push_back({{0, 1, -1},
+	                  {0, 2, 3},
+	                  {1, 2, 3},
+	                  {1, 3, 2},
+	                  {1, 4, 2},
+	                  {3, 2, 5},
+	                  {3, 1, 1},
+	                  {4, 3, -3}});
+	vi2_t nge = _edges[0];
+	nge.push_back({1, 3, 5}); // Negative cycle edge in graph
+	_edges.push_back(nge);
 
-string _g2str(const Graph &g)
-{
-	ostringstream oss;
-	oss << "{";
-	for (int i = 0; auto e : g.second) {
-		if (i++) oss << ", ";
-		oss << _vec2str<Edge>(e);
-	}
-	oss << "}";
-	return oss.str();
-}
-
-void test_impl(const vector<pair<Graph, int>> &ip,
-               const vector<vector<int>> &op, shared_ptr<_00_test> f)
-{
-	for (size_t i = 0; i < ip.size(); i++) {
-		vector<int> t = f->shortestPaths(ip[i].first, ip[i].second);
-		if (t != op[i]) {
-			cerr << f->getName() << " test failed: "
-			     << "expected " << _vec2str(op[i]) << ", actual "
-			     << _vec2str(t) << "." << endl;
-			exit(1);
-		}
-
-		if (getenv("SHOW_TEST_OUTPUT"))
-			cout << "  test-" << i << ":  "
-			     << "input: graph = " << _g2str(ip[i].first)
-			     << ", source = " << ip[i].second
-			     << "  output: nums = " << _vec2str(t) << "\n";
-	}
-}
-
-int main(int, char **)
-{
-	Graph g1{4, {{2, 1, -10}, {3, 2, 3}, {0, 3, 5}, {0, 1, 4}}};
-	Graph g2{5,
-	         {{0, 1, -1},
-	          {0, 2, 3},
-	          {1, 2, 3},
-	          {1, 3, 2},
-	          {1, 4, 2},
-	          {3, 2, 5},
-	          {3, 1, 1},
-	          {4, 3, -3}}};
-	Graph ng1(g1);
-	ng1.second.push_back({1, 3, 5}); // Negative cycle graph
-
-	vector<pair<Graph, int>> ip{
-	    {g1, 0},
-	    {g2, 0},
-	    {ng1, 0},
-	};
-
-	vector<vector<int>> op{
+	vi2_t _distances = {
 	    {0, -2, 8, 5},
 	    {0, -1, 2, -2, 1},
-	    {INT_MIN}, // Indicate negative cycle is detected in graph
+	    {NX}, // When graph has negative cycle
 	};
 
-	vector<shared_ptr<_00_test>> impls{
-	    make_shared<_01_bellman_ford>(),
-	};
-
-	for (size_t i = 0; i < impls.size(); i++) {
-		if (getenv("SHOW_TEST_OUTPUT"))
-			cout << "Testing implementation " << i + 1 << " "
-			     << impls[i]->getName() << "\n";
-
-		test_impl(ip, op, impls[i]);
+	int n = size(_nodes);
+	fii (i, n) {
+		_bf_check(_nodes[i], _edges[i], _sources[i], _distances[i]);
 	}
-
-	cout << "Executed " << impls.size() << " implementations"
-	     << " with " << ip.size() << " tests." << endl;
-	return 0;
 }
+
+INIT_TEST_MAIN();

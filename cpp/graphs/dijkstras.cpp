@@ -10,240 +10,144 @@
  * https://cp-algorithms.com/graph/dijkstra.html
  */
 
-#include <bits/stdc++.h>
+#include "tests.h"
+#include "graphs.h"
 
-using namespace std;
-
-/* ===========================================================================
- * Data structures
- * ===========================================================================
- */
-// Graph is an adjacency list where for each vertex u contains a list of other
-// end vertex v and weight w in pair.
-using Graph = vector<vector<pair<int, int>>>;
-
-/* ===========================================================================
- * Test helpers
- * ===========================================================================
- */
-class _00_test
-{
-public:
-	_00_test(const string &name) : name(name) {}
-
-	string getName(void) const { return name; }
-
-	virtual void shortestPaths(int n, const vector<vector<int>> &edges,
-	                           int src, vector<int> &distances,
-	                           vector<int> &predecessors) = 0;
-
-	vector<int> shortestPath(const vector<int> &p, int s, int t)
-	{
-		vector<int> path;
-		for (int v = t; v != s; v = p[v]) path.push_back(v);
-		path.push_back(s);
-		reverse(path.begin(), path.end());
-		return path;
-	}
-
-private:
-	string name;
-};
+using namespace Graphs;
 
 /* ===========================================================================
  * Algorithms implementation
  * ===========================================================================
  */
+#define _dij_MaxHeap_desc "Using max heap (priority queue)"
 
 /* TC : Best O(n^2), Average O(n^2), Worst O(n^2)
  * SC : O(1)
  */
-class _01_dijkstra_pq : public _00_test
+namespace MaxHeap
 {
-public:
-	_01_dijkstra_pq()
-	    : _00_test("Dijkstra's single source shortest path to all "
-	               "nodes using Priority Queue (Heap)")
-	{
-	}
+/* Graph is adjacency list with list of pairs of adjacent nodes & weight */
+void dijkstras(const v2pi_t &g, int s, vi_t &d, vi_t &p)
+{
+	using pq_t = priority_queue<pii_t, vpi_t, greater<pii_t>>; // max heap
 
-	void shortestPaths(int n, const vector<vector<int>> &edges, int s,
-	                   vector<int> &d, vector<int> &p) override
-	{
-		// use n + 1 for 1 indexed nodes
-		Graph g(n);
-		for (size_t i = 0; i < edges.size(); i++) {
-			int u = edges[i][0];
-			int v = edges[i][1];
-			int w = edges[i][2];
-			g[u].emplace_back(v, w);
+	const int n = size(g);
+	d.assign(n, X);  // distances
+	p.assign(n, -1); // predecessors
 
-			// skip this for directed graph
-			g[v].emplace_back(u, w);
-		}
-		dijkstras(g, s, d, p);
-	}
+	pq_t pq;
+	pq.emplace(0, s);
+	d[s] = 0;
 
-	void dijkstras(const Graph &g, int s, vector<int> &d, vector<int> &p)
-	{
-		using pi_t = pair<int, int>;
-		using vi_t = vector<pi_t>;
-		using pq_t = priority_queue<pi_t, vi_t, greater<pi_t>>;
+	while (!pq.empty()) {
+		int x = pq.top().first;
+		int u = pq.top().second;
+		pq.pop();
 
-		const int n = static_cast<int>(g.size());
-		d.assign(n, INT_MAX); // distances
-		p.assign(n, -1);      // predecessors
+		if (x > d[u]) continue;
 
-		pq_t pq;
-		pq.emplace(0, s);
-		d[s] = 0;
+		for (auto an : g[u]) {
+			int v = an.first;
+			int w = an.second;
 
-		while (!pq.empty()) {
-			int x = pq.top().first;
-			int u = pq.top().second;
-			pq.pop();
-
-			if (x > d[u]) continue;
-
-			for (auto an : g[u]) {
-				int v = an.first;
-				int w = an.second;
-
-				if (d[v] > x + w) {
-					d[v] = x + w;
-					p[v] = u;
-					pq.emplace(d[v], v);
-				}
+			if (d[v] > x + w) {
+				d[v] = x + w;
+				p[v] = u;
+				pq.emplace(d[v], v);
 			}
 		}
 	}
-};
+}
+
+void shortestPaths(int nodes, const vi2_t &edges, int source, vi_t &distances,
+                   vi_t &parent)
+{
+	// use n + 1 for 1 indexed nodes
+	v2pi_t g(nodes);
+	fsi (i, size(edges)) {
+		int u = edges[i][0];
+		int v = edges[i][1];
+		int w = edges[i][2];
+		g[u].emplace_back(v, w);
+
+		// skip this for directed graph
+		g[v].emplace_back(u, w);
+	}
+	dijkstras(g, source, distances, parent);
+}
+}; // namespace MaxHeap
 
 /* ===========================================================================
  * Test code
  * ===========================================================================
  */
-using pi_t = pair<int, int>;
-using vi_t = vector<pi_t>;
-using v1_t = vector<int>;
-using ed_t = vector<v1_t>;
-using ip_t = tuple<int, ed_t, int, int>;
-using op_t = tuple<v1_t, v1_t, v1_t>;
-
-template <class Container = v1_t>
-string _vec2str(const Container &vec)
-{
-	ostringstream oss;
-	using T = Container::value_type;
-	oss << "{";
-	copy(vec.begin(), vec.end() - 1, ostream_iterator<T>(oss, ", "));
-	oss << vec.back();
-	oss << "}";
-	return oss.str();
-}
-
-string _e2str(const ed_t &edges)
-{
-	ostringstream oss;
-	oss << "{";
-	for (int i = 0; const auto &e : edges) {
-		if (i++) oss << ", ";
-		oss << _vec2str(e);
-	}
-	oss << "}";
-	return oss.str();
-}
-
-void test_impl(const vector<ip_t> &ip, const vector<op_t> &op,
-               shared_ptr<_00_test> f)
-{
-	for (size_t i = 0; i < ip.size(); i++) {
-		const auto &[n, e, s, t] = ip[i];
-		const auto &[_d, _p, _path] = op[i];
-		vector<int> d, p, path;
-
-		f->shortestPaths(n, e, s, d, p);
-		if (d != _d) {
-			cerr << f->getName() << " test failed: "
-			     << "distances expected " << _vec2str(_d)
-			     << ", actual " << _vec2str(d) << "." << endl;
-			exit(1);
-		}
-
-		if (p != _p) {
-			cerr << f->getName() << " test failed: "
-			     << "predecessors expected " << _vec2str(_p)
-			     << ", actual " << _vec2str(p) << "." << endl;
-			exit(1);
-		}
-
-		path = f->shortestPath(p, s, t);
-		if (path != _path) {
-			cerr << f->getName() << " test failed: "
-			     << "paths expected " << _vec2str(_path)
-			     << ", actual " << _vec2str(path) << "." << endl;
-			exit(1);
-		}
-
-		if (getenv("SHOW_TEST_OUTPUT"))
-			cout << "  test-" << i << ":  "
-			     << "input: nodes = " << n
-			     << ", edges = " << _e2str(e)
-			     << ", source = " << s << ", target = " << t
-			     << "  output: distances = " << _vec2str(d)
-			     << ", predecessors = " << _vec2str(p)
-			     << ", path = " << _vec2str(path) << "\n";
-	}
-}
-
-void _append_test_data_01(vector<ip_t> &ip, vector<op_t> &op)
-{
-	int n = 5, /*m = 6,*/ s = 0, t = 4;
-	ed_t e{{0, 1, 2}, {0, 3, 1}, {1, 2, 4},
-	       {1, 4, 5}, {2, 3, 3}, {2, 4, 1}};
-
-	v1_t d{0, 2, 4, 1, 5};
-	v1_t p{-1, 0, 3, 0, 2};
-	v1_t path{0, 3, 2, 4};
-
-	ip.emplace_back(n, e, s, t);
-	op.emplace_back(d, p, path);
-}
-
-void _append_test_data_02(vector<ip_t> &ip, vector<op_t> &op)
-{
-	int n = 4, /*m = 4,*/ s = 0, t = 3;
-	ed_t e{{0, 1, 24}, {0, 3, 20}, {2, 0, 3}, {3, 2, 12}};
-
-	v1_t d{0, 24, 3, 15};
-	v1_t p{-1, 0, 0, 2};
-	v1_t path{0, 2, 3};
-
-	ip.emplace_back(n, e, s, t);
-	op.emplace_back(d, p, path);
-}
-
-int main(int, char **)
-{
-	vector<ip_t> ip;
-	vector<op_t> op;
-
-	_append_test_data_01(ip, op);
-	_append_test_data_02(ip, op);
-
-	vector<shared_ptr<_00_test>> impls{
-	    make_shared<_01_dijkstra_pq>(),
-	};
-
-	for (size_t i = 0; i < impls.size(); i++) {
-		if (getenv("SHOW_TEST_OUTPUT"))
-			cout << "Testing implementation " << i + 1 << " "
-			     << impls[i]->getName() << "\n";
-
-		test_impl(ip, op, impls[i]);
+#define _dij_check_eq_fail(e, a, _pre)                                       \
+	{                                                                    \
+		string em, am;                                               \
+		em = format("{} = {}", _pre, to_string(e));                  \
+		am = format("{} = {}", _pre, to_string(a));                  \
+		SET_CUSTOM_FAIL_MSG(em, am);                                 \
+		FAIL();                                                      \
 	}
 
-	cout << "Executed " << impls.size() << " implementations"
-	     << " with " << ip.size() << " tests." << endl;
-	return 0;
-}
+#define _dij_check_eq(_d, d, _p, p, _p2, p2)                                 \
+	if (_d != d) _dij_check_eq_fail(_d, d, "distances");                 \
+	if (_p != p) _dij_check_eq_fail(_p, p, "parent");                    \
+	if (_p2 != p2) _dij_check_eq_fail(_p2, p2, "path");                  \
+	SUCCESS();
+
+#define _dij_show_output(n, ed, s, t, d, p, p2)                              \
+	{                                                                    \
+		string im, om;                                               \
+		im += to_string(n, ed) + ", ";                               \
+		im += format("source = {}, target = {}", s, t);              \
+		om += format("distances = {}, parent = {}, path = {}",       \
+		             to_string(d), to_string(p), to_string(p2));     \
+		SHOW_OUTPUT(im, om);                                         \
+	}
+
+#define _dij_check(n, ed, s, t, _d, _p, _p2, _ns)                            \
+	{                                                                    \
+		vi_t d, p, p2;                                               \
+		_ns::shortestPaths(n, ed, s, d, p);                          \
+		p2 = shortestPath(p, s, t);                                  \
+		_dij_check_eq(_d, d, _p, p, _p2, p2);                        \
+		_dij_show_output(n, ed, s, t, d, p, p2);                     \
+	}
+
+#define _dij_desc_prefix "Dijkstra's single source shortest path to all"
+
+#define _DIJ_NAME(var) var
+#define _DIJ_DESC(var) _dij_desc_prefix " - " _dij_##var##_desc
+
+#define _DIJ_TEST(var)                                                       \
+	TEST(_DIJ_NAME(var), _DIJ_DESC(var))                                 \
+	{                                                                    \
+		vi_t _nodes = {5, 4};                                        \
+		vi_t _sources = {0, 0};                                      \
+		vi_t _targets = {4, 3};                                      \
+		vector<vi2_t> _edges;                                        \
+		_edges.push_back({{0, 1, 2},                                 \
+		                  {0, 3, 1},                                 \
+		                  {1, 2, 4},                                 \
+		                  {1, 4, 5},                                 \
+		                  {2, 3, 3},                                 \
+		                  {2, 4, 1}});                               \
+		_edges.push_back(                                            \
+		    {{0, 1, 24}, {0, 3, 20}, {2, 0, 3}, {3, 2, 12}});        \
+                                                                             \
+		vi2_t _distances = {{0, 2, 4, 1, 5}, {0, 24, 3, 15}};        \
+		vi2_t _parent = {{-1, 0, 3, 0, 2}, {-1, 0, 0, 2}};           \
+		vi2_t _paths = {{0, 3, 2, 4}, {0, 2, 3}};                    \
+                                                                             \
+		int n = size(_nodes);                                        \
+		fii (i, n) {                                                 \
+			_dij_check(_nodes[i], _edges[i], _sources[i],        \
+			           _targets[i], _distances[i], _parent[i],   \
+			           _paths[i], _DIJ_NAME(var));               \
+		}                                                            \
+	}
+
+_DIJ_TEST(MaxHeap);
+
+INIT_TEST_MAIN();

@@ -9,20 +9,15 @@
  * https://favtutor.com/blogs/kruskal-algorithm-cpp
  */
 
-#include <bits/stdc++.h>
+#include "tests.h"
+#include "graphs.h"
 
-using namespace std;
+using namespace Graphs;
 
 /* ===========================================================================
- * Data structures
+ * Algorithms implementation
  * ===========================================================================
  */
-// Edge is a pair of nodes with weight [u, v, w]
-using Edge = array<int, 3>;
-
-// Graph is a pair of V nodes & array of E edges
-using Graph = pair<int, vector<Edge>>;
-
 /* Function object to sort edges by weight in ascending order
  *
  * This is similar to std::less<Edge>() except it doesn't call
@@ -30,78 +25,54 @@ using Graph = pair<int, vector<Edge>>;
  * compare by weights of the edges.
  */
 struct LessEdge {
-	bool operator()(const Edge &l, const Edge &r) const
+	bool operator()(const vi_t &l, const vi_t &r) const
 	{
 		return l[2] < r[2];
 	}
 };
 
-/* ===========================================================================
- * Test helpers
- * ===========================================================================
- */
-class _00_test
-{
-public:
-	_00_test(const string &name) : name(name) {}
-
-	string getName(void) const { return name; }
-
-	virtual Graph minSpanTree(Graph g) = 0;
-
-private:
-	string name;
-};
-
-/* ===========================================================================
- * Algorithms implementation
- * ===========================================================================
- */
+#define _kru_Simple_desc "Simple"
 
 /* TC : O(n log n + n^2)
  * SC : O(V) => O(n)
  */
-class _01_kruskal_simple : public _00_test
+namespace Simple
 {
-public:
-	_01_kruskal_simple()
-	    : _00_test("Kruskal's minimum spanning tree - Simple")
-	{
-	}
+vi2_t minSpanTree(int n, vi2_t &g)
+{
+	vi2_t o;
+	vi_t p(n);
+	iota(begin(p), end(p), 0);
+	ranges::sort(g, LessEdge());
 
-	Graph minSpanTree(Graph g) override
-	{
-		const int n = g.first;
-		Graph o(n, {});
-		vector<int> p(n);
-		iota(p.begin(), p.end(), 0);
+	/* int c = 0; */ // minimum cost
+	for (const auto &ge : g) {
+		int u = ge[0], v = ge[1], w = ge[2];
+		int pu = p[u];
+		int pv = p[v];
+		if (pu == pv) continue;
 
-		ranges::sort(g.second, LessEdge());
+		/* c += w; */
+		o.push_back({u, v, w});
 
-		/* int c = 0; */ // minimum cost
-		for (const auto &[u, v, w] : g.second) {
-			int pu = p[u];
-			int pv = p[v];
-
-			if (pu == pv) continue;
-
-			/* c += w; */
-			o.second.push_back({u, v, w});
-
-			for (int i = 0; i < n; i++) {
-				if (p[i] == pu) p[i] = pv;
-			}
+		for (int i = 0; i < n; i++) {
+			if (p[i] == pu) p[i] = pv;
 		}
-		return o;
 	}
-};
+	return o;
+}
+} // namespace Simple
+
+#define _kru_DisjointSetUnion_desc "Disjoint Set Union"
 
 /* TC : O(n log n + alpha(n)) => O(n log n)
  *      where alpha(n) is the inverse Ackermann function => near O(1)
  * SC : O(V) => O(n)
  */
+namespace DisjointSetUnion
+{
 struct DSU {
-	vector<int> parent, rank;
+	vi_t parent, rank;
 
 	DSU(int n) : parent(n), rank(n) {}
 
@@ -129,140 +100,71 @@ struct DSU {
 	}
 };
 
-class _02_kruskal_dsu : public _00_test
+vi2_t minSpanTree(int n, vi2_t &g)
 {
-public:
-	_02_kruskal_dsu()
-	    : _00_test("Kruskal's minimum spanning tree - Disjoint Set Union")
-	{
+	DSU d(n);
+	vi2_t o;
+
+	fii (i, n) d.make_set(i);
+
+	ranges::sort(g, LessEdge());
+
+	/* int c = 0; */ // minimum cost
+	for (const auto &ge : g) {
+		int u = ge[0], v = ge[1], w = ge[2];
+		if (d.find_set(u) == d.find_set(v)) continue;
+
+		/* c += w; */
+		o.push_back({u, v, w});
+		d.union_sets(u, v);
 	}
-
-	Graph minSpanTree(Graph g) override
-	{
-		const int n = g.first;
-		DSU d(n);
-		Graph o(n, {});
-		for (int i = 0; i < n; i++) d.make_set(i);
-
-		ranges::sort(g.second, LessEdge());
-
-		/* int c = 0; */ // minimum cost
-		for (const auto &[u, v, w] : g.second) {
-			if (d.find_set(u) == d.find_set(v)) continue;
-
-			/* c += w; */
-			o.second.push_back({u, v, w});
-			d.union_sets(u, v);
-		}
-		return o;
-	}
-};
+	return o;
+}
+} // namespace DisjointSetUnion
 
 /* ===========================================================================
  * Test code
  * ===========================================================================
  */
-template <class T, size_t N>
-ostream &operator<<(ostream &out, const array<T, N> &c)
-{
-	out << "{";
-	for (int i = 0; const auto &e : c) out << (i++ ? ", " : "") << e;
-	out << "}";
-	return out;
-}
-
-template <class T>
-ostream &operator<<(ostream &out, const vector<T> &c)
-{
-	out << "{";
-	for (int i = 0; const auto &e : c) out << (i++ ? ", " : "") << e;
-	out << "}";
-	return out;
-}
-
-ostream &operator<<(ostream &out, const Graph &g)
-{
-	out << "Graph nodes = " << g.first << ", edges = " << g.second;
-	return out;
-}
-
-void test_impl(const vector<Graph> &ip, const vector<Graph> &op,
-               shared_ptr<_00_test> f)
-{
-	for (size_t i = 0; i < ip.size(); i++) {
-		Graph t = f->minSpanTree(ip[i]);
-		if (t != op[i]) {
-			cerr << f->getName() << " test failed: "
-			     << "expected " << op[i] << ", actual " << t
-			     << "." << endl;
-			exit(1);
-		}
-
-		if (getenv("SHOW_TEST_OUTPUT"))
-			cout << "  test-" << i << ":  "
-			     << "input: " << ip[i] << "  output: " << t
-			     << "\n";
-	}
-}
-
-void _append_test_data_01(vector<Graph> &ip, vector<Graph> &op)
-{
-	Graph i(4, {});
-	i.second.push_back({0, 1, 10});
-	i.second.push_back({1, 3, 15});
-	i.second.push_back({2, 3, 4});
-	i.second.push_back({2, 0, 6});
-	i.second.push_back({0, 3, 5});
-
-	Graph o(i.first, {});
-	o.second.push_back({2, 3, 4});
-	o.second.push_back({0, 3, 5});
-	o.second.push_back({0, 1, 10});
-
-	ip.push_back(i);
-	op.push_back(o);
-}
-
-void _append_test_data_02(vector<Graph> &ip, vector<Graph> &op)
-{
-	Graph i(4, {});
-	i.second.push_back({0, 1, 10});
-	i.second.push_back({0, 2, 21});
-	i.second.push_back({1, 2, 18});
-	i.second.push_back({1, 3, 22});
-	i.second.push_back({2, 3, 13});
-
-	Graph o(i.first, {});
-	o.second.push_back({0, 1, 10});
-	o.second.push_back({2, 3, 13});
-	o.second.push_back({1, 2, 18});
-
-	ip.push_back(i);
-	op.push_back(o);
-}
-
-int main(int, char **)
-{
-	vector<Graph> ip;
-	vector<Graph> op;
-
-	_append_test_data_01(ip, op);
-	_append_test_data_02(ip, op);
-
-	vector<shared_ptr<_00_test>> impls{
-	    make_shared<_01_kruskal_simple>(),
-	    make_shared<_02_kruskal_dsu>(),
-	};
-
-	for (size_t i = 0; i < impls.size(); i++) {
-		if (getenv("SHOW_TEST_OUTPUT"))
-			cout << "Testing implementation " << i + 1 << " "
-			     << impls[i]->getName() << "\n";
-
-		test_impl(ip, op, impls[i]);
+#define _kru_check(n, ed, e, _ns)                                            \
+	{                                                                    \
+		vi2_t a = _ns::minSpanTree(n, ed);                           \
+		string im = to_string(n, ed);                                \
+		CHECK_EQ(e, a);                                              \
+		SHOW_OUTPUT(im, a);                                          \
 	}
 
-	cout << "Executed " << impls.size() << " implementations"
-	     << " with " << ip.size() << " tests." << endl;
-	return 0;
-}
+#define _kru_desc_prefix "Kruskal's Minimum Spanning Tree"
+
+#define _KRU_NAME(var) var
+#define _KRU_DESC(var) _kru_desc_prefix " - " _kru_##var##_desc
+
+#define _KRU_TEST(var)                                                       \
+	TEST(_KRU_NAME(var), _KRU_DESC(var))                                 \
+	{                                                                    \
+		vi_t _nodes = {4, 4};                                        \
+		vector<vi2_t> _edges;                                        \
+		_edges.push_back({{0, 1, 10},                                \
+		                  {1, 3, 15},                                \
+		                  {2, 3, 4},                                 \
+		                  {2, 0, 6},                                 \
+		                  {0, 3, 5}});                               \
+		_edges.push_back({{0, 1, 10},                                \
+		                  {0, 2, 21},                                \
+		                  {1, 2, 18},                                \
+		                  {1, 3, 22},                                \
+		                  {2, 3, 13}});                              \
+		vector<vi2_t> _e;                                            \
+		_e.push_back({{2, 3, 4}, {0, 3, 5}, {0, 1, 10}});            \
+		_e.push_back({{0, 1, 10}, {2, 3, 13}, {1, 2, 18}});          \
+		int n = size(_nodes);                                        \
+		fii (i, n) {                                                 \
+			_kru_check(_nodes[i], _edges[i], _e[i],              \
+			           _KRU_NAME(var));                          \
+		}                                                            \
+	}
+
+_KRU_TEST(Simple);
+_KRU_TEST(DisjointSetUnion);
+
+INIT_TEST_MAIN();
