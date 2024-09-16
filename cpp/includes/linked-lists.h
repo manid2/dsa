@@ -68,4 +68,11 @@ ostream &operator<<(ostream &out, NodePtr node)
 	out << "}";
 	return out;
 }
+
+string to_string(NodePtr node)
+{
+	ostringstream oss;
+	oss << node;
+	return oss.str();
+}
 } // namespace SinglyLinkedList

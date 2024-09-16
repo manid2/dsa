@@ -77,19 +77,9 @@ static vector<_test *> _tests;
 	this->em.clear(), this->am.clear();                                  \
 	this->im.clear(), this->om.clear()
 
-#define _GET_FAIL_MSG(e, a)                                                  \
-	cerr << "expected: ";                                                \
-	if (this->em.empty())                                                \
-		cerr << (e);                                                 \
-	else                                                                 \
-		cerr << this->em;                                            \
-	cerr << "  ";                                                        \
-	cerr << "actual: ";                                                  \
-	if (this->am.empty())                                                \
-		cerr << (a);                                                 \
-	else                                                                 \
-		cerr << this->am;                                            \
-	cerr << "." << endl
+#define _GET_FAIL_MSG()                                                      \
+	cerr << format("expected: {}  actual: {}.", this->em, this->am)      \
+	     << endl
 
 #define _GET_SUCCESS_MSG(i, o)                                               \
 	cout << "input: ";                                                   \
@@ -105,14 +95,21 @@ static vector<_test *> _tests;
 		cout << this->om;                                            \
 	cout << ".\n"
 
+#define SUCCESS() this->incTc()
+
+#define FAIL()                                                               \
+	cerr << "  test-" << (this->getTc() + 1) << " failed! ";             \
+	for (io_t _e : this->getIo()) cerr << _e;                            \
+	_GET_FAIL_MSG();                                                     \
+	exit(1);
+
 #define _CHECK(op, e, a)                                                     \
 	if (e op a) {                                                        \
-		this->incTc();                                               \
+		SUCCESS();                                                   \
 	} else {                                                             \
-		cerr << "  test-" << (this->getTc() + 1) << " failed! ";     \
-		for (io_t _e : this->getIo()) cerr << _e;                    \
-		_GET_FAIL_MSG(e, a);                                         \
-		exit(1);                                                     \
+		string em = to_string(e), am = to_string(a);                 \
+		SET_CUSTOM_FAIL_MSG(em, am);                                 \
+		FAIL();                                                      \
 	}
 
 #define CHECK_EQ(e, a) _CHECK(==, (e), (a))
@@ -156,6 +153,13 @@ static vector<_test *> _tests;
 #define vi2_v(v, n, i) vi2_t v((n), vi_t((n), (i)))
 
 template <class T>
+ostream &operator<<(ostream &out, const pair<T, T> &p)
+{
+	out << "{" << format("{}, {}", p.first, p.second) << "}";
+	return out;
+}
+
+template <class T>
 ostream &operator<<(ostream &out, const vector<T> &c)
 {
 	out << "{";
@@ -179,4 +183,10 @@ string to_string(const vector<T> &c)
 	ostringstream oss;
 	oss << c;
 	return oss.str();
+}
+
+string to_string(const string &s)
+{
+	string q("\"");
+	return q + s + q;
 }
