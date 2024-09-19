@@ -107,8 +107,8 @@ static vector<_test *> _tests;
 	if (e op a) {                                                        \
 		SUCCESS();                                                   \
 	} else {                                                             \
-		string em = to_string(e), am = to_string(a);                 \
-		SET_CUSTOM_FAIL_MSG(em, am);                                 \
+		if (empty(this->em) && empty(this->am))                      \
+			this->em = to_string(e), this->am = to_string(a);    \
 		FAIL();                                                      \
 	}
 
