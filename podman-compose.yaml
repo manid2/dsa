@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  dev-dsa:
+    build:
+      context: .
+      dockerfile: Containerfile
+    container_name: dev-dsa1
+    volumes:
+      - .:/dsa:z
+    working_dir: /dsa
+    tty: true
+    restart: unless-stopped
